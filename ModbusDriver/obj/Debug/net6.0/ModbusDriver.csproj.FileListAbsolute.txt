@@ -1,0 +1,12 @@
+C:\Users\phill\source\repos\ModbusDriver\ModbusDriver\bin\Debug\net6.0\ModbusDriver.deps.json
+C:\Users\phill\source\repos\ModbusDriver\ModbusDriver\bin\Debug\net6.0\ModbusDriver.dll
+C:\Users\phill\source\repos\ModbusDriver\ModbusDriver\bin\Debug\net6.0\ref\ModbusDriver.dll
+C:\Users\phill\source\repos\ModbusDriver\ModbusDriver\bin\Debug\net6.0\ModbusDriver.pdb
+C:\Users\phill\source\repos\ModbusDriver\ModbusDriver\obj\Debug\net6.0\ModbusDriver.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\phill\source\repos\ModbusDriver\ModbusDriver\obj\Debug\net6.0\ModbusDriver.AssemblyInfoInputs.cache
+C:\Users\phill\source\repos\ModbusDriver\ModbusDriver\obj\Debug\net6.0\ModbusDriver.AssemblyInfo.cs
+C:\Users\phill\source\repos\ModbusDriver\ModbusDriver\obj\Debug\net6.0\ModbusDriver.csproj.CoreCompileInputs.cache
+C:\Users\phill\source\repos\ModbusDriver\ModbusDriver\obj\Debug\net6.0\ModbusDriver.dll
+C:\Users\phill\source\repos\ModbusDriver\ModbusDriver\obj\Debug\net6.0\ref\ModbusDriver.dll
+C:\Users\phill\source\repos\ModbusDriver\ModbusDriver\obj\Debug\net6.0\ModbusDriver.pdb
+C:\Users\phill\source\repos\ModbusDriver\ModbusDriver\obj\Debug\net6.0\ModbusDriver.csproj.AssemblyReference.cache

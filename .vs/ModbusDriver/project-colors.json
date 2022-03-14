@@ -1,0 +1,31 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "972dbb27-1e6b-4e84-802c-1e6ba89b52df": {
+      "ProjectGuid": "972dbb27-1e6b-4e84-802c-1e6ba89b52df",
+      "DisplayName": "ModbusDriver",
+      "ColorIndex": 0
+    },
+    "8ed50bd6-eb26-4507-bff6-621b02b67ff3": {
+      "ProjectGuid": "8ed50bd6-eb26-4507-bff6-621b02b67ff3",
+      "DisplayName": "ModBusClientTester",
+      "ColorIndex": 1
+    },
+    "6b1bcc6d-2591-499b-a228-14c79e8dc5ac": {
+      "ProjectGuid": "6b1bcc6d-2591-499b-a228-14c79e8dc5ac",
+      "DisplayName": "ConsoleApp1",
+      "ColorIndex": 2
+    },
+    "6b4cd75d-5b57-46f3-8a23-ca1ada15c8df": {
+      "ProjectGuid": "6b4cd75d-5b57-46f3-8a23-ca1ada15c8df",
+      "DisplayName": "Tester",
+      "ColorIndex": 3
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Miscellaneous Files",
+      "ColorIndex": -1
+    }
+  },
+  "NextColorIndex": 4
+}
