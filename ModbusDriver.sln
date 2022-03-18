@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModbusDriver", "ModbusDriver\ModbusDriver.csproj", "{972DBB27-1E6B-4E84-802C-1E6BA89B52DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModbusDriver", "ModbusDriver\ModbusDriver.csproj", "{972DBB27-1E6B-4E84-802C-1E6BA89B52DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModBusClientTester", "ModBusClientTester\ModBusClientTester.csproj", "{8ED50BD6-EB26-4507-BFF6-621B02B67FF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModBusClientTester", "ModBusClientTester\ModBusClientTester.csproj", "{8ED50BD6-EB26-4507-BFF6-621B02B67FF3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParticleCommunicator", "ApexR5p\ParticleCommunicator.csproj", "{C80584B4-9CE1-4096-BC97-7DB840669BA8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{8ED50BD6-EB26-4507-BFF6-621B02B67FF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8ED50BD6-EB26-4507-BFF6-621B02B67FF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8ED50BD6-EB26-4507-BFF6-621B02B67FF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C80584B4-9CE1-4096-BC97-7DB840669BA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C80584B4-9CE1-4096-BC97-7DB840669BA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C80584B4-9CE1-4096-BC97-7DB840669BA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C80584B4-9CE1-4096-BC97-7DB840669BA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

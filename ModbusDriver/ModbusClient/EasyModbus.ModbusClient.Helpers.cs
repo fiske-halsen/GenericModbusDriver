@@ -127,6 +127,7 @@ namespace EasyModbus
                 throw new ArgumentException("Input Array length invalid - Array langth must be '2'");
             int highRegister = registers[1];
             int lowRegister = registers[0];
+
             byte[] highRegisterBytes = BitConverter.GetBytes(highRegister);
             byte[] lowRegisterBytes = BitConverter.GetBytes(lowRegister);
             byte[] doubleBytes = {
@@ -476,8 +477,8 @@ namespace EasyModbus
             for (int i = 0; i < stringLength / 2; i++)
             {
                 registerResult = BitConverter.GetBytes(registers[offset + i]);
-                result[i * 2] = registerResult[0];
-                result[i * 2 + 1] = registerResult[1];
+                result[i * 2] = registerResult[1];
+                result[i * 2 + 1] = registerResult[0];
             }
             return System.Text.Encoding.Default.GetString(result);
         }

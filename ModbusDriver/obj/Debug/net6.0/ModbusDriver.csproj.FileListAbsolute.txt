@@ -10,3 +10,15 @@ C:\Users\phill\source\repos\ModbusDriver\ModbusDriver\obj\Debug\net6.0\ModbusDri
 C:\Users\phill\source\repos\ModbusDriver\ModbusDriver\obj\Debug\net6.0\ref\ModbusDriver.dll
 C:\Users\phill\source\repos\ModbusDriver\ModbusDriver\obj\Debug\net6.0\ModbusDriver.pdb
 C:\Users\phill\source\repos\ModbusDriver\ModbusDriver\obj\Debug\net6.0\ModbusDriver.csproj.AssemblyReference.cache
+C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModbusDriver\bin\Debug\net6.0\ModbusDriver.deps.json
+C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModbusDriver\bin\Debug\net6.0\ModbusDriver.dll
+C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModbusDriver\bin\Debug\net6.0\ModbusDriver.pdb
+C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModbusDriver\obj\Debug\net6.0\ModbusDriver.csproj.AssemblyReference.cache
+C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModbusDriver\obj\Debug\net6.0\ModbusDriver.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModbusDriver\obj\Debug\net6.0\ModbusDriver.AssemblyInfoInputs.cache
+C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModbusDriver\obj\Debug\net6.0\ModbusDriver.AssemblyInfo.cs
+C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModbusDriver\obj\Debug\net6.0\ModbusDriver.csproj.CoreCompileInputs.cache
+C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModbusDriver\obj\Debug\net6.0\ModbusDriver.dll
+C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModbusDriver\obj\Debug\net6.0\refint\ModbusDriver.dll
+C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModbusDriver\obj\Debug\net6.0\ModbusDriver.pdb
+C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModbusDriver\obj\Debug\net6.0\ref\ModbusDriver.dll
