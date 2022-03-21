@@ -653,7 +653,6 @@ namespace EasyModbus
                         return ReadHoldingRegisters(startingAddress, quantity);
                     }
 
-
                 }
             }
             response = new int[quantity];
