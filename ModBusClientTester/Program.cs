@@ -3,16 +3,67 @@ using EasyModbus;
 using ModBusClientTester;
 using ParticleCommunicator.Communicator;
 using ParticleCommunicator.Helpers;
+using ParticleCommunicator.Models;
+using System.Collections;
 
 ModbusClient e = new ModbusClient();
 
 // connection
 e.Connect("192.168.0.14", 502);
 
-var holdingsTest = e.ReadHoldingRegisters(5008,2);
+// Turn off/on
+//e.WriteSingleRegister(1,12);
 
-var converted = EasyModbus.ModbusClient.ConvertRegistersToInt(holdingsTest, ModbusClient.RegisterOrder.HighLow);
 
+// -------------------- Initial Delay --------------------------
+
+var holdingInitialDelay = e.ReadHoldingRegisters(28,2);
+
+// --------------------------- Flow rate -----------------------
+
+//var holdings = e.ReadHoldingRegisters(22,1)[0];
+
+// --------------------- Record count ----------------------
+
+//var recordHolding = e.ReadHoldingRegisters(200,100);
+
+// ---------------------- Flow rate unit ----------------------
+
+/*var holdings1 = e.ReadHoldingRegisters(40, 1);
+var holdings2 = e.ReadHoldingRegisters(41, 1);
+
+
+var text1 = EasyModbus.ModbusClient.ConvertRegistersToString(holdings1,0,2);
+var text2 = EasyModbus.ModbusClient.ConvertRegistersToString(holdings2,0,2);*/
+
+
+//var holdings = e.ReadHoldingRegisters(3009,1)[0];
+
+//var bitArray = new BitArray(new int[] { holdings });
+
+/*AlarmStatus alarmStatus = new AlarmStatus()
+{
+    IsChannelEnabled = bitArray[0],
+    IsAlarmEnabled = bitArray[1]
+};*/
+
+/*BitArray b = new BitArray(new int[] { holdings});
+
+DeviceStatus ds = new DeviceStatus()
+{
+    IsRunning = b[0],
+    IsSampling = b[1],
+    IsNewData = b [2]
+};
+
+Console.WriteLine(ds);
+
+bool[] bits = new bool[b.Count];
+b.CopyTo(bits, 0);*/
+
+//var holdingsTest = e.ReadHoldingRegisters(5008,2);
+
+//var converted = EasyModbus.ModbusClient.ConvertRegistersToInt(holdingsTest, ModbusClient.RegisterOrder.HighLow);
 
 // Wait with this one
 //ParticleCommunicator.Communicator.ParticleCommunicator pc = new ParticleCommunicator.Communicator.ParticleCommunicator();
@@ -36,22 +87,41 @@ var converted = EasyModbus.ModbusClient.ConvertRegistersToInt(holdingsTest, Modb
 //var firmwareVersionHoldingRegister = e.ReadHoldingRegisters(3, 1);
 
 // ----------------------- for product name -------------
-//var productHoldingRegisters = e.ReadHoldingRegisters(14, 1);
-
-//int[] convert = { productHoldingRegisters[1], productHoldingRegisters[0]};
+/*var modelHoldingRegister1 = e.ReadHoldingRegisters(6, 1);
+var modelHoldingRegister2 = e.ReadHoldingRegisters(7, 1);
+var modelHoldingRegister3 = e.ReadHoldingRegisters(8, 1);
+var modelHoldingRegister4 = e.ReadHoldingRegisters(9, 1);
+var modelHoldingRegister5 = e.ReadHoldingRegisters(10, 1);
+var modelHoldingRegister6 = e.ReadHoldingRegisters(11, 1);
+var modelHoldingRegister7 = e.ReadHoldingRegisters(12, 1);
+var modelHoldingRegister8 = e.ReadHoldingRegisters(13, 1);
 
 // Todo make sure that you can use the highlow option for the ConvertRegistersToString method
 
-/*var tester = EasyModbus.ModbusClient.ConvertRegistersToString(productHoldingRegisters, 0, 2);
+var tester1 = EasyModbus.ModbusClient.ConvertRegistersToString(modelHoldingRegister1, 0, 2);
+var tester2 = EasyModbus.ModbusClient.ConvertRegistersToString(modelHoldingRegister2, 0, 2);
+var tester3 = EasyModbus.ModbusClient.ConvertRegistersToString(modelHoldingRegister3, 0, 2);
+var tester4 = EasyModbus.ModbusClient.ConvertRegistersToString(modelHoldingRegister4, 0, 2);
+var tester5 = EasyModbus.ModbusClient.ConvertRegistersToString(modelHoldingRegister5, 0, 2);
+var tester6 = EasyModbus.ModbusClient.ConvertRegistersToString(modelHoldingRegister6, 0, 2);
+var tester7 = EasyModbus.ModbusClient.ConvertRegistersToString(modelHoldingRegister7, 0, 2);
+var tester8 = EasyModbus.ModbusClient.ConvertRegistersToString(modelHoldingRegister8, 0, 2);
 
-var registers = BitConverter.GetBytes(productHoldingRegisters[0]);
-byte[] registerResult = new byte[2];
-registerResult[0] = registers[1];
-registerResult[1] = registers[0];
+var concat = $"{tester1}{tester2}" +
+                   $"{tester3}{tester4}" +
+                   $"{tester5}{tester6}" +
+                   $"{tester7}{tester8}";
 
-var no2 = System.Text.Encoding.Default.GetString(registerResult);
+var index = concat.Replace("\0", string.Empty);*/
 
-Console.WriteLine(tester);*/
+//var registers = BitConverter.GetBytes(productHoldingRegisters[0]);
+//byte[] registerResult = new byte[2];
+//registerResult[0] = registers[1];
+//registerResult[1] = registers[0];
+
+//var no2 = System.Text.Encoding.Default.GetString(registerResult);
+
+//Console.WriteLine(tester);
 
 //------------------------- product name ending --------------------------
 
@@ -139,7 +209,7 @@ int[] newest = { readHoldingRegisters[1], readHoldingRegisters[0] };
 
 //dt = dt.AddSeconds(-dt.Second);
 
-var tester2 = EasyModbus.ModbusClient.ConvertRegistersToInt(readHoldingRegisters, ModbusClient.RegisterOrder.HighLow);
+//var tester2 = EasyModbus.ModbusClient.ConvertRegistersToInt(readHoldingRegisters, ModbusClient.RegisterOrder.HighLow);
 
 //Console.WriteLine($"tester: {tester}");
 

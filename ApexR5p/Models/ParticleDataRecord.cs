@@ -1,6 +1,6 @@
-﻿namespace ParticleCommunicator.Helpers
+﻿namespace ParticleCommunicator.Models
 {
-    public class DataRecord
+    public class ParticleDataRecord
     {
         public DateTime SampleTime { get; set; }
         public int Location { get; set; }

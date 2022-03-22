@@ -1,6 +1,7 @@
 ﻿using EasyModbus;
 using EasyModbus.Exceptions;
 using ParticleCommunicator.Helpers;
+using ParticleCommunicator.Models;
 
 namespace ParticleCommunicator.Communicator
 {
@@ -15,10 +16,13 @@ namespace ParticleCommunicator.Communicator
         #endregion
 
         #region Enums
+        // Only support first two particle channels for now
         public enum ParticleChannel
         {
             ParticleChannel1,
-            ParticleChannel2
+            ParticleChannel2,
+            ParticleChannel3,
+            ParticleChannel4
         }
 
         public enum CommandRegister40001
@@ -35,8 +39,30 @@ namespace ParticleCommunicator.Communicator
         {
             ModbusVersion = 0,
             CommandRegister = 1,
+            DeviceStatus = 2,
             FirmwareVersion = 3,
-            LocationId = 25
+            LocationNumber = 25,
+            ProductNameChars1 = 6,
+            ProductNameChars2 = 7,
+            ProductNameChars3 = 8,
+            ProductNameChars4 = 9,
+            ProductNameChars5 = 10,
+            ProductNameChars6 = 11,
+            ProductNameChars7 = 12,
+            ProductNameChars8 = 13,
+            ModelNameChars1 = 14,
+            ModelNameChars2 = 15,
+            ModelNameChars3 = 16,
+            ModelNameChars4 = 17,
+            ModelNameChars5 = 18,
+            ModelNameChars6 = 19,
+            ModelNameChars7 = 20,
+            ModelNameChars8 = 21,
+            FlowRate = 22,
+            FlowRateUnitChars1 = 40,
+            FlowRateUnitChars2 = 41,
+            RecordCount = 23,
+            RecordCountIndex = 24
         }
 
         public enum LowHoldingRegisters
@@ -45,6 +71,7 @@ namespace ParticleCommunicator.Communicator
             InstrumentTimeLow = 26,
             SetInstrumentTimeLow = 34,
             HoldTime = 31,
+            InitialDelay = 29,
             SampleTime = 33,
             AlarmParticelChannel1 = 3009,
             AlarmParticleChannel2 = 3011,
@@ -58,11 +85,18 @@ namespace ParticleCommunicator.Communicator
             InstrumentTimeHigh = 27,
             SetInstrumentTimeHigh = 35,
             HoldTime = 30,
+            InitialDelay = 28,
             SampleTime = 32,
             AlarmParticelChannel1 = 3008,
             AlarmParticleChannel2 = 3010,
             AlarmThresHoldParticleChannel1 = 5008,
             AlarmThresHoldParticleChannel2 = 5010
+        }
+
+        public enum AlarmStatusValue
+        {
+            EnableAlarm = 3,
+            DisableAlarm = 1
         }
 
         public enum LowInputRegisters
@@ -73,12 +107,6 @@ namespace ParticleCommunicator.Communicator
         public enum HighInputRegisters
         {
 
-        }
-
-        public enum AlarmStatus
-        {
-            EnableAlarm = 3,
-            DisableAlarm = 1,
         }
         #endregion
 
@@ -103,26 +131,86 @@ namespace ParticleCommunicator.Communicator
             var convertToVNumber = ((decimal)firmwareVersionHoldingRegister / 100).ToString();
             return $"v.{convertToVNumber}.";
         }
+
         /// <summary>
         /// Gets the device status
         /// </summary>
-        public void GetDeviceStatus()
+        /// <returns>Device status object</returns>
+        public DeviceStatus GetDeviceStatus()
         {
-
+            var deviceStatusHoldingRegister = modbusClient.ReadHoldingRegisters((int)SingleRegisters.DeviceStatus, 1);
+            var deviceStatus = HelperService.GetDeviceStatusFromInt(deviceStatusHoldingRegister[0]);
+            return deviceStatus;
         }
         /// <summary>
-        /// Gets the particle product name
+        /// Gets the product name from the particle counter
         /// </summary>
-        /// <returns>Returns the productName</returns>
-        public string getProductName()
+        /// <returns>A string containing the product name</returns>
+        public string GetProductName()
         {
-            return "";
+            var registerChars1 = modbusClient.ReadHoldingRegisters((int)SingleRegisters.ProductNameChars1, 1);
+            var registerChars2 = modbusClient.ReadHoldingRegisters((int)SingleRegisters.ProductNameChars2, 1);
+            var registerChars3 = modbusClient.ReadHoldingRegisters((int)SingleRegisters.ProductNameChars3, 1);
+            var registerChars4 = modbusClient.ReadHoldingRegisters((int)SingleRegisters.ProductNameChars4, 1);
+            var registerChars5 = modbusClient.ReadHoldingRegisters((int)SingleRegisters.ProductNameChars5, 1);
+            var registerChars6 = modbusClient.ReadHoldingRegisters((int)SingleRegisters.ProductNameChars6, 1);
+            var registerChars7 = modbusClient.ReadHoldingRegisters((int)SingleRegisters.ProductNameChars7, 1);
+            var registerChars8 = modbusClient.ReadHoldingRegisters((int)SingleRegisters.ProductNameChars8, 1);
+
+            var chars1Converted = ModbusClient.ConvertRegistersToString(registerChars1, 0, 2);
+            var chars2Converted = ModbusClient.ConvertRegistersToString(registerChars2, 0, 2);
+            var chars3Converted = ModbusClient.ConvertRegistersToString(registerChars3, 0, 2);
+            var chars4Converted = ModbusClient.ConvertRegistersToString(registerChars4, 0, 2);
+            var chars5Converted = ModbusClient.ConvertRegistersToString(registerChars5, 0, 2);
+            var chars6Converted = ModbusClient.ConvertRegistersToString(registerChars6, 0, 2);
+            var chars7Converted = ModbusClient.ConvertRegistersToString(registerChars7, 0, 2);
+            var chars8Converted = ModbusClient.ConvertRegistersToString(registerChars8, 0, 2);
+
+            var concatProductName = $"{chars1Converted}{chars2Converted}" +
+                                $"{chars3Converted}{chars4Converted}" +
+                                $"{chars5Converted}{chars6Converted}" +
+                                $"{chars7Converted}{chars8Converted}";
+
+            return HelperService.RemoveNullsFromString(concatProductName);
         }
+
+        /// <summary>
+        /// Gets the model name from the particle counter
+        /// </summary>
+        /// <returns>A string containing the model name</returns>
+        public string GetModelName()
+        {
+            var registerChars1 = modbusClient.ReadHoldingRegisters((int)SingleRegisters.ModelNameChars1, 1);
+            var registerChars2 = modbusClient.ReadHoldingRegisters((int)SingleRegisters.ModelNameChars2, 1);
+            var registerChars3 = modbusClient.ReadHoldingRegisters((int)SingleRegisters.ModelNameChars3, 1);
+            var registerChars4 = modbusClient.ReadHoldingRegisters((int)SingleRegisters.ModelNameChars4, 1);
+            var registerChars5 = modbusClient.ReadHoldingRegisters((int)SingleRegisters.ModelNameChars5, 1);
+            var registerChars6 = modbusClient.ReadHoldingRegisters((int)SingleRegisters.ModelNameChars6, 1);
+            var registerChars7 = modbusClient.ReadHoldingRegisters((int)SingleRegisters.ModelNameChars7, 1);
+            var registerChars8 = modbusClient.ReadHoldingRegisters((int)SingleRegisters.ModelNameChars8, 1);
+
+            var chars1Converted = ModbusClient.ConvertRegistersToString(registerChars1, 0, 2);
+            var chars2Converted = ModbusClient.ConvertRegistersToString(registerChars2, 0, 2);
+            var chars3Converted = ModbusClient.ConvertRegistersToString(registerChars3, 0, 2);
+            var chars4Converted = ModbusClient.ConvertRegistersToString(registerChars4, 0, 2);
+            var chars5Converted = ModbusClient.ConvertRegistersToString(registerChars5, 0, 2);
+            var chars6Converted = ModbusClient.ConvertRegistersToString(registerChars6, 0, 2);
+            var chars7Converted = ModbusClient.ConvertRegistersToString(registerChars7, 0, 2);
+            var chars8Converted = ModbusClient.ConvertRegistersToString(registerChars8, 0, 2);
+
+            var concatModelName = $"{chars1Converted}{chars2Converted}" +
+                                 $"{chars3Converted}{chars4Converted}" +
+                                 $"{chars5Converted}{chars6Converted}" +
+                                 $"{chars7Converted}{chars8Converted}";
+
+            return HelperService.RemoveNullsFromString(concatModelName);
+        }
+
         /// <summary>
         /// Gets the particle serial number
         /// </summary>
         /// <returns></returns>
-        public int GetParticleSerialNumber()
+        public int GetInstrumentSerialNumber()
         {
             var serialNumberHoldingRegister = modbusClient.ReadHoldingRegisters((int)LowHoldingRegisters.SensorSerialLow, 2);
             var serialNumber = ModbusClient.ConvertRegistersToInt(serialNumberHoldingRegister, ModbusClient.RegisterOrder.HighLow);
@@ -228,16 +316,16 @@ namespace ParticleCommunicator.Communicator
         /// <returns> the location ID where data was recorded</returns>
         public int GetLocationNumber()
         {
-            return modbusClient.ReadHoldingRegisters((int)SingleRegisters.LocationId, 1)[0];
+            return modbusClient.ReadHoldingRegisters((int)SingleRegisters.LocationNumber, 1)[0];
         }
 
         /// <summary>
         /// Method that sets the location id
         /// </summary>
-        /// <param name="locationId">Location id</param>
-        public void SetLocationNumber(int locationId)
+        /// <param name="LocationNumber">Location number</param>
+        public void SetLocationNumber(int LocationNumber)
         {
-            modbusClient.WriteSingleRegister((int)SingleRegisters.LocationId, locationId);
+            modbusClient.WriteSingleRegister((int)SingleRegisters.LocationNumber, LocationNumber);
         }
         /// <summary>
         /// Gets the current hold time
@@ -255,16 +343,15 @@ namespace ParticleCommunicator.Communicator
         /// <param name="holdTimeInSeconds"> the hold time</param>
         public void SetHoldTime(int holdTimeInSeconds)
         {
-            // Check if hold time is in min-max range
-            if (holdTimeInSeconds < 0 || holdTimeInSeconds > 359999)
-            {
-                throw new ModbusException("Hold time min = 0, max = 359999");
-            }
+
+            HelperService.CheckIfValidHoldOrDelayTime(holdTimeInSeconds);
 
             var holdTimeLowRegisterSeconds = HelperService.GetMinValueSampleHoldRegister();
 
+            var isOnlyLowRegister = HelperService.CheckIfTimeOnlyToLowRegister(holdTimeInSeconds, holdTimeLowRegisterSeconds);
+
             // check if hold time in seconds only has to be written to the low register
-            if (holdTimeInSeconds <= holdTimeLowRegisterSeconds)
+            if (isOnlyLowRegister)
             {
                 modbusClient.WriteSingleRegister((int)LowHoldingRegisters.HoldTime, holdTimeLowRegisterSeconds);
                 return;
@@ -291,17 +378,18 @@ namespace ParticleCommunicator.Communicator
         /// <param name="sampleTime">The sample time to be set</param>
         public void SetSampleTime(int sampleTimeInSeconds)
         {
-            if (sampleTimeInSeconds < 0 || sampleTimeInSeconds > 86399)
-            {
-                throw new ModbusException("Sample time min = 0, max = 86399");
-            }
+            HelperService.CheckIfValidHoldOrDelayTime(sampleTimeInSeconds);
+
             var sampleTimeLowRegisterSeconds = HelperService.GetMinValueSampleHoldRegister();
 
-            if (sampleTimeInSeconds <= sampleTimeLowRegisterSeconds)
+            var isOnlyLowRegister = HelperService.CheckIfTimeOnlyToLowRegister(sampleTimeInSeconds, sampleTimeLowRegisterSeconds);
+
+            if (isOnlyLowRegister)
             {
                 modbusClient.WriteSingleRegister((int)LowHoldingRegisters.SampleTime, sampleTimeInSeconds);
                 return;
             }
+
             var convertedSampleTime = ModbusClient.ConvertIntToRegisters(sampleTimeInSeconds, ModbusClient.RegisterOrder.HighLow);
             modbusClient.WriteSingleRegister((int)HighHoldingRegisters.SampleTime, convertedSampleTime[0]);
             modbusClient.WriteSingleRegister((int)LowHoldingRegisters.SampleTime, convertedSampleTime[1]);
@@ -312,22 +400,22 @@ namespace ParticleCommunicator.Communicator
         /// </summary>
         /// <param name="particleChannel">The particle channel</param>
         /// <returns>Boolean if a channels alarm is active or not</returns>
-        public bool CheckIfAlarmIsEnabledForChannel(ParticleChannel particleChannel)
+        public AlarmStatus CheckIfAlarmIsEnabledForChannel(ParticleChannel particleChannel)
         {
-            int alarmChannelRegister;
+            int alarmChannelRegisteNumber;
 
             if (particleChannel.Equals(ParticleChannel.ParticleChannel1))
             {
-                alarmChannelRegister = modbusClient.ReadHoldingRegisters((int)LowHoldingRegisters.AlarmParticelChannel1, 1)[0];
+                alarmChannelRegisteNumber = modbusClient.ReadHoldingRegisters((int)LowHoldingRegisters.AlarmParticelChannel1, 1)[0];
             }
             else
             {
-                alarmChannelRegister = modbusClient.ReadHoldingRegisters((int)LowHoldingRegisters.AlarmParticleChannel2, 1)[0];
+                alarmChannelRegisteNumber = modbusClient.ReadHoldingRegisters((int)LowHoldingRegisters.AlarmParticleChannel2, 1)[0];
             }
 
-            var isAlarmEnabled = HelperService.IsAlarmEnabled(alarmChannelRegister);
+            var alarmStatus = HelperService.GetDeviceAlarmStatus(alarmChannelRegisteNumber);
 
-            return isAlarmEnabled;
+            return alarmStatus;
         }
 
         /// <summary>
@@ -335,7 +423,7 @@ namespace ParticleCommunicator.Communicator
         /// </summary>
         /// <param name="particleChannel">The particle channel</param>
         /// <param name="alarmStatus">The alarm status</param>
-        public void SetAlarmForChannel(ParticleChannel particleChannel, AlarmStatus alarmStatus)
+        public void SetAlarmForChannel(ParticleChannel particleChannel, AlarmStatusValue alarmStatus)
         {
             if (particleChannel.Equals(ParticleChannel.ParticleChannel1))
             {
@@ -379,5 +467,94 @@ namespace ParticleCommunicator.Communicator
             modbusClient.WriteSingleRegister((int)LowHoldingRegisters.AlarmThresHoldParticleChannel2, convertedThresHoldToRegisters[1]);
         }
 
+        /// <summary>
+        /// Gets the instrument flow rate, use the GetInstrumentFlowRateUnit() for the unit
+        /// </summary>
+        /// <returns>Returns the flow number</returns>
+        public int GetInstrumentFlowRate()
+        {
+            var flowRateHolding = modbusClient.ReadHoldingRegisters((int)SingleRegisters.FlowRate, 1);
+            return flowRateHolding[0] / 100;
+        }
+
+        /// <summary>
+        /// Gets the instrument flow rate unit
+        /// </summary>
+        /// <returns>Returns a string containing the flow rate unit</returns>
+        public string GetInstrumentFlowRatUnit()
+        {
+            var holdingsFlowRateRegister1 = modbusClient.ReadHoldingRegisters((int)SingleRegisters.FlowRateUnitChars1, 1);
+            var holdingsFlowRateRegister2 = modbusClient.ReadHoldingRegisters((int)SingleRegisters.FlowRateUnitChars2, 1);
+
+            var flowRateChars1 = ModbusClient.ConvertRegistersToString(holdingsFlowRateRegister1, 0, 2);
+            var flowRateChars2 = ModbusClient.ConvertRegistersToString(holdingsFlowRateRegister2, 0, 2);
+
+            var concatFlowRateUnit = $"{flowRateChars1}{flowRateChars2}";
+
+            return HelperService.RemoveNullsFromString(concatFlowRateUnit);
+        }
+
+        /// <summary>
+        /// Gets the total data record count stored in the particle counter
+        /// </summary>
+        /// <returns>The total data record count</returns>
+        public int GetTotalDataRecordCount()
+        {
+            return modbusClient.ReadHoldingRegisters((int)SingleRegisters.RecordCount, 1)[0];
+        }
+
+        /// <summary>
+        /// gets the current data record index set in the buffer which you can retrieve data from
+        /// </summary>
+        /// <returns>The current data record index</returns>
+        public int GetCurrentDataRecordIndex()
+        {
+            return modbusClient.ReadHoldingRegisters((int)SingleRegisters.RecordCountIndex, 1)[0];
+        }
+
+        /// <summary>
+        /// Sets the current data record index in the buffer to retrieve data from
+        /// </summary>
+        /// <param name="recordDataIndex"> The record index to be set</param>
+        public void SetCurrentDataRecordIndex(int recordDataIndex)
+        {
+            int totalDataRecord = GetTotalDataRecordCount();
+
+            HelperService.CheckIfValidRecordDataIndex(recordDataIndex, totalDataRecord);
+          
+            modbusClient.WriteSingleRegister((int)SingleRegisters.RecordCountIndex, recordDataIndex);
+        }
+
+        /// <summary>
+        /// Gets the current initial delay in seconds
+        /// </summary>
+        /// <returns> The initial delay </returns>
+        public int GetCurrentInitialDelay()
+        {
+            var holdingInitialDelay = modbusClient.ReadHoldingRegisters((int)LowHoldingRegisters.InitialDelay,2);
+            return ModbusClient.ConvertRegistersToInt(holdingInitialDelay, ModbusClient.RegisterOrder.HighLow);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="initialDelayInSeconds"></param>
+        public void SetCurrentInitialDelay(int initialDelayInSeconds)
+        {
+            HelperService.CheckIfValidHoldOrDelayTime(initialDelayInSeconds);
+
+            var delayTimeLowRegisterSeconds = HelperService.GetMinValueSampleHoldRegister();
+
+            var isOnlyLowRegister = HelperService.CheckIfTimeOnlyToLowRegister(initialDelayInSeconds, delayTimeLowRegisterSeconds);
+
+            if (isOnlyLowRegister)
+            {
+                modbusClient.WriteSingleRegister((int) LowHoldingRegisters.InitialDelay, initialDelayInSeconds);
+                return;
+            }
+            var convertedDelaTimeRegisters = ModbusClient.ConvertIntToRegisters(initialDelayInSeconds, ModbusClient.RegisterOrder.HighLow);
+            modbusClient.WriteSingleRegister((int) HighHoldingRegisters.InitialDelay, convertedDelaTimeRegisters[0]);
+            modbusClient.WriteSingleRegister((int) LowHoldingRegisters.InitialDelay, convertedDelaTimeRegisters[1]);
+        }
     }
 }
