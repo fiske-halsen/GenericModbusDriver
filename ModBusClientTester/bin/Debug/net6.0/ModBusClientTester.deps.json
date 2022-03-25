@@ -9,6 +9,7 @@
       "ModBusClientTester/1.0.0": {
         "dependencies": {
           "ModbusDriver": "1.0.0",
+          "ParticleCommunicator": "1.0.0",
           "System.IO.Ports": "6.0.0"
         },
         "runtime": {
@@ -101,6 +102,14 @@
         "runtime": {
           "ModbusDriver.dll": {}
         }
+      },
+      "ParticleCommunicator/1.0.0": {
+        "dependencies": {
+          "ModbusDriver": "1.0.0"
+        },
+        "runtime": {
+          "ParticleCommunicator.dll": {}
+        }
       }
     }
   },
@@ -160,6 +169,11 @@
       "hashPath": "system.io.ports.6.0.0.nupkg.sha512"
     },
     "ModbusDriver/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ParticleCommunicator/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

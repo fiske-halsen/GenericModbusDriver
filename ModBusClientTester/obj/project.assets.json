@@ -94,6 +94,19 @@
         "runtime": {
           "bin/placeholder/ModbusDriver.dll": {}
         }
+      },
+      "ParticleCommunicator/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "ModbusDriver": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/ParticleCommunicator.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ParticleCommunicator.dll": {}
+        }
       }
     }
   },
@@ -230,11 +243,17 @@
       "type": "project",
       "path": "../ModbusDriver/ModbusDriver.csproj",
       "msbuildProject": "../ModbusDriver/ModbusDriver.csproj"
+    },
+    "ParticleCommunicator/1.0.0": {
+      "type": "project",
+      "path": "../ApexR5p/ParticleCommunicator.csproj",
+      "msbuildProject": "../ApexR5p/ParticleCommunicator.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net6.0": [
       "ModbusDriver >= 1.0.0",
+      "ParticleCommunicator >= 1.0.0",
       "System.IO.Ports >= 6.0.0"
     ]
   },
@@ -272,6 +291,9 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
+            "C:\\Users\\phia\\Desktop\\ModbusDriver\\GenericModbusDriver\\ApexR5p\\ParticleCommunicator.csproj": {
+              "projectPath": "C:\\Users\\phia\\Desktop\\ModbusDriver\\GenericModbusDriver\\ApexR5p\\ParticleCommunicator.csproj"
+            },
             "C:\\Users\\phia\\Desktop\\ModbusDriver\\GenericModbusDriver\\ModbusDriver\\ModbusDriver.csproj": {
               "projectPath": "C:\\Users\\phia\\Desktop\\ModbusDriver\\GenericModbusDriver\\ModbusDriver\\ModbusDriver.csproj"
             }
