@@ -21,8 +21,6 @@ var productHoldingRegisters = e.ReadHoldingRegisters(14,1);
 var tester = EasyModbus.ModbusClient.ConvertRegistersToString(productHoldingRegisters, 0, 2);
 
 
-
-
 var registers = BitConverter.GetBytes(productHoldingRegisters[0]);
 byte[] registerResult = new byte[2];
 registerResult[0] = registers[1];
