@@ -9,13 +9,21 @@ using System.Diagnostics;
 
 ModbusClient e = new ModbusClient();
 
+
 // connection
- //e.Connect("192.168.0.14", 502); //home Ip
- //e.Connect("10.8.4.61", 502);
-//e.WriteSingleRegister(1,12);
+ e.Connect("192.168.0.14", 502); //home Ip
+                                 //e.Connect("10.8.4.61", 502);
+                                 //e.WriteSingleRegister(1,12);
+
+
+for(int i = 1000; i <= 9999; i+= 100)
+{
+    var holdingsTest = e.ReadHoldingRegisters(i, 100);
+}
+
 
 //var inputs = e.ReadHoldingRegisters(3008,4);
-
+return; 
 // -------------------------------- Phillips Libary ------------------------------
 ParticleCommunicatorApexR5p apex = new ParticleCommunicatorApexR5p();
 
@@ -38,8 +46,20 @@ apex.StartInstrument();
 
 List<ParticleDataRecord> list = new List<ParticleDataRecord>();
 
-apex.GetParticleDataRecords(2, ref list);
+Debug.WriteLine("Started.....");
 
+apex.ParticleDataRecordEvent += new Subscriber().OnMyEventRaised;
+
+
+await apex.RaiseParticleDataRecordEvent(2);
+
+Debug.Write(list.Count);
+
+foreach (var item in list)
+{
+    Debug.WriteLine("particle channel 1 " + item.ParticalChannel1Count);
+    Debug.WriteLine("particle channel 2 " + item.ParticalChannel2Count);
+}
 
 ////var sampleStatusHoldings1 = e.ReadInputRegisters(6,1)[0];
 ////var sampleStatusHoldings2 = e.ReadInputRegisters(7,2)[0];
@@ -296,9 +316,9 @@ var rose = new DateTime(1970, 1, 1).AddSeconds(tests);*/
 //bool[] readCoils = e.ReadCoils(30, 1);
 
 // -------------------------- Holding registers -------------------- 
-int[] readHoldingRegisters = e.ReadInputRegisters(44, 2);  //Read 10 Holding Registers from Server, starting with Address 1
+//int[] readHoldingRegisters = e.ReadInputRegisters(44, 2);  //Read 10 Holding Registers from Server, starting with Address 1
 
-int[] newest = { readHoldingRegisters[1], readHoldingRegisters[0] };
+//int[] newest = { readHoldingRegisters[1], readHoldingRegisters[0] };
 
 //dt = dt.AddSeconds(-dt.Second);
 
@@ -327,6 +347,6 @@ int[] newest = { readHoldingRegisters[1], readHoldingRegisters[0] };
 // Console.WriteLine(tester);
 
 
-e.Disconnect();                                                //Disconnect from Server
-Console.Write("Press any key to continue . . . ");
-Console.ReadKey(true);
+//e.Disconnect();                                                //Disconnect from Server
+//Console.Write("Press any key to continue . . . ");
+//Console.ReadKey(true);

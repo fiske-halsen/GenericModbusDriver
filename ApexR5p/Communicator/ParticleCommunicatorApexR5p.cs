@@ -11,9 +11,17 @@ namespace ParticleCommunicator.Communicator
     /// </summary>
     public class ParticleCommunicatorApexR5p
     {
+        #region Classes
+        public class ParticleDataRecordArgs : EventArgs
+        {
+            public List<ParticleDataRecord> ParticleRecords { get; set; }
+        }
+        #endregion
+
         #region Class Variables
         private ModbusClient modbusClient;
-        private DateTime defaultDate = new DateTime(1970, 1, 1);
+        private static readonly DateTime defaultDate = new DateTime(1970, 1, 1);
+        public event EventHandler<ParticleDataRecordArgs> ParticleDataRecordEvent;
         #endregion
 
         #region Enums
@@ -578,7 +586,6 @@ namespace ParticleCommunicator.Communicator
                 modbusClient.WriteSingleRegister((int)LowHoldingRegisters.AlarmThresHoldParticleChannel2, convertedThresHoldToRegisters[1]);
 
             }
-
         }
 
         /// <summary>
@@ -773,55 +780,61 @@ namespace ParticleCommunicator.Communicator
             return dos;
         }
 
-        public void GetParticleDataRecords(int sampleRate, ref List<ParticleDataRecord> list)
-        {
-            //List<ParticleDataRecord> records = new List<ParticleDataRecord>();
 
-            while (true)
+        // Should create a method for each input register attribute
+
+        /// <summary>
+        /// Raises an event, create subscribers to get latest sample data
+        /// </summary>
+        /// <param name="sampleRate"></param>
+        /// <param name="particleRecords"></param>
+        public async Task RaiseParticleDataRecordEvent(int sampleRate)
+        {
+            // Need to find a way to pause sampling
+            var isSampling = true;
+
+            // Init list
+            List<ParticleDataRecord> particleRecords = new List<ParticleDataRecord>();
+
+            while (isSampling)
             {
                 var totalDataRecords = GetTotalDataRecordCount();
                 var holdTimeMili = GetHoldTime() * 1000;
                 var sampleTimeMili = GetSampleTime() * 1000;
 
-                if (list.Count == sampleRate)
+                if (particleRecords.Count == sampleRate)
                 {
-                    Debug.WriteLine(list.Count());
-
-                    foreach (var item in list)
+                    ParticleDataRecordArgs args = new ParticleDataRecordArgs()
                     {
-                        Debug.WriteLine("Particle Channel 1: " + item.ParticalChannel1Count);
-                        Debug.WriteLine("Particle Channel 2: ", item.ParticalChannel2Count);
-                    }
+                        ParticleRecords = particleRecords
+                    };
 
+                    ParticleDataRecordEvent?.Invoke(null, args);
                     ClearAllDataRecords();
-                    list.Clear();
-                    // Dunno if this solution is gonna work, but its working should be holdtime + sample time, otherwise dublicates
-                    Thread.Sleep(holdTimeMili + sampleTimeMili);
-
-                    var particleChannel1Count1 = ModbusClient.ConvertRegistersToInt(modbusClient.ReadInputRegisters((int)HighInputRegisters.ParticleChannel1, 2), ModbusClient.RegisterOrder.HighLow);
-                    var particleChannel2Count2 = ModbusClient.ConvertRegistersToInt(modbusClient.ReadInputRegisters((int)HighInputRegisters.ParticleChannel2, 2), ModbusClient.RegisterOrder.HighLow);
-
-                    Debug.WriteLine("Particle channel 1 count teest" + particleChannel1Count1);
-                    Debug.WriteLine("Particle channel 2 count teest" + particleChannel2Count2);
-
+                    particleRecords.Clear();
+                    await Task.Delay(holdTimeMili + sampleTimeMili);
                 }
 
                 if (totalDataRecords > 0)
                 {
-                    var sampleTimeStamp = ModbusClient.ConvertRegistersToInt(modbusClient.ReadInputRegisters((int)HighInputRegisters.SampleTimeStamp, 2), ModbusClient.RegisterOrder.HighLow);
+                    // Registers
+                    var sampleTimeStampRegister = modbusClient.ReadInputRegisters((int)HighInputRegisters.SampleTimeStamp, 2);
+                    var currentSampleTimeRegister = modbusClient.ReadInputRegisters((int)HighInputRegisters.SampleTimeStamp, 2);
+                    var currentSampleStatusRegisters = modbusClient.ReadInputRegisters((int)LowInputRegisters.SampleStatus, 1);
+                    var sampleStatusRegisters = modbusClient.ReadInputRegisters((int)LowInputRegisters.SampleStatus, 1);
+                    var currentLocationRegisters = modbusClient.ReadInputRegisters((int)HighInputRegisters.Location, 2);
+                    var particleChannel1Registers = modbusClient.ReadInputRegisters((int)HighInputRegisters.ParticleChannel1, 2);
+                    var particleChannel2Registers = modbusClient.ReadInputRegisters((int)HighInputRegisters.ParticleChannel2, 2);
 
-                    var sampleTimeConverted = new DateTime(1970, 1, 1).AddSeconds(sampleTimeStamp);
-
-                    var currentSampleTimeInSeconds = ModbusClient.ConvertRegistersToInt(modbusClient.ReadInputRegisters((int)HighInputRegisters.SampleTime, 2), ModbusClient.RegisterOrder.HighLow);
-
-                    var sampleStatus = modbusClient.ReadInputRegisters((int)LowInputRegisters.SampleStatus, 1)[0];
-
-                    var sampleStatusWord = HelperService.GetSampleStatusWord(sampleStatus);
-
-                    var location = ModbusClient.ConvertRegistersToInt(modbusClient.ReadInputRegisters((int)HighInputRegisters.Location, 2), ModbusClient.RegisterOrder.HighLow);
-                    var particleChannel1Count = ModbusClient.ConvertRegistersToInt(modbusClient.ReadInputRegisters((int)HighInputRegisters.ParticleChannel1, 2), ModbusClient.RegisterOrder.HighLow);
-                    var particleChannel2Count = ModbusClient.ConvertRegistersToInt(modbusClient.ReadInputRegisters((int)HighInputRegisters.ParticleChannel2, 2), ModbusClient.RegisterOrder.HighLow);
-
+                    // Conversion of registers
+                    var sampleTimeStampSeconds = ModbusClient.ConvertRegistersToInt(sampleTimeStampRegister, ModbusClient.RegisterOrder.HighLow);
+                    var tempDateDefault = defaultDate;
+                    var sampleTimeConverted = tempDateDefault.AddSeconds(sampleTimeStampSeconds);
+                    var currentSampleTimeInSeconds = ModbusClient.ConvertRegistersToInt(currentSampleTimeRegister, ModbusClient.RegisterOrder.HighLow);
+                    var sampleStatusWord = HelperService.GetSampleStatusWord(sampleStatusRegisters[0]);
+                    var location = ModbusClient.ConvertRegistersToInt(currentLocationRegisters, ModbusClient.RegisterOrder.HighLow);
+                    var particleChannel1Count = ModbusClient.ConvertRegistersToInt(particleChannel1Registers, ModbusClient.RegisterOrder.HighLow);
+                    var particleChannel2Count = ModbusClient.ConvertRegistersToInt(particleChannel2Registers, ModbusClient.RegisterOrder.HighLow);
 
                     ParticleDataRecord record = new ParticleDataRecord()
                     {
@@ -833,16 +846,14 @@ namespace ParticleCommunicator.Communicator
                         ParticalChannel2Count = particleChannel2Count
                     };
 
-                    var isNotUnique = list.Any(x => DateTime.Equals(x.SampleTimeStamp, sampleTimeConverted));
+                    var isNotUnique = particleRecords.Any(x => DateTime.Equals(x.SampleTimeStamp, sampleTimeConverted));
 
                     if (!isNotUnique)
                     {
-                        list.Add(record);
-                        Thread.Sleep(1000);
-
+                        particleRecords.Add(record);
+                        await Task.Delay(1000);
                     }
                 }
-
             }
         }
     }
