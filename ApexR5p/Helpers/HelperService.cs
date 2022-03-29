@@ -37,11 +37,11 @@ namespace ParticleCommunicator.Helpers
         /// </summary>
         /// <param name="alarmStatusNumber">The alarm number</param>
         /// <returns></returns>
-        public static AlarmStatus GetDeviceAlarmStatus(int alarmStatusNumber)
+        public static ChannelAlarmStatus GetDeviceAlarmStatus(int alarmStatusNumber)
         {
             var bitArray = ConvertLowRegisterIntToBits(alarmStatusNumber);
 
-            AlarmStatus alarmStatus = new AlarmStatus()
+            ChannelAlarmStatus alarmStatus = new ChannelAlarmStatus()
             {
                 IsChannelEnabled = bitArray[0],
                 IsAlarmEnabled = bitArray[1]
@@ -55,18 +55,94 @@ namespace ParticleCommunicator.Helpers
         /// </summary>
         /// <param name="deviceStatusNumber">The device status number</param>
         /// <returns></returns>
-        public static DeviceStatus GetDeviceStatusFromInt(int deviceStatusNumber)
+        public static DeviceStatus GetDeviceStatusFromInt(int deviceStatusNumber, int additionalDeviceStatusNumber)
         {
-            var bitArray = ConvertLowRegisterIntToBits(deviceStatusNumber);
+            var bitArrayDeviceStatus = ConvertLowRegisterIntToBits(deviceStatusNumber);
+            var bitArrayAdditionalDeviceStatus = ConvertLowRegisterIntToBits(additionalDeviceStatusNumber);
 
             DeviceStatus deviceStatus = new DeviceStatus()
             {
-                IsRunning = bitArray[0],
-                IsSampling = bitArray[1],
-                IsNewData = bitArray[2]
+                IsRunning = bitArrayDeviceStatus[0],
+                IsSampling = bitArrayDeviceStatus[1],
+                IsNewData = bitArrayDeviceStatus[2],
+                IsDeviceError = bitArrayDeviceStatus[3],
+                IsInDataValidation = bitArrayDeviceStatus[9],
+                IsInLocationValidation = bitArrayDeviceStatus[10],
+                IsLaserOutOfSpec = bitArrayDeviceStatus[11],
+                IsFlowOutOfSpec = bitArrayDeviceStatus[12],
+                IsInstrumentServiceNeeded = bitArrayDeviceStatus[13],
+                IsHighAlarmThresHoldExceeded = bitArrayDeviceStatus[14],
+                IsLowAlarmThresHoldExceeded = bitArrayDeviceStatus[15],
+                IsLaserCurrentOutOfSpec = bitArrayAdditionalDeviceStatus[0],
+                IsLaserPowerOutOfSpec = bitArrayAdditionalDeviceStatus[1],
+                IsLaserSupplyOutOfSpec = bitArrayAdditionalDeviceStatus[2],
+                IsLaserLifeStatusOutOfSpec = bitArrayAdditionalDeviceStatus[3],
+                IsUnitsFlowBelowThreshold = bitArrayAdditionalDeviceStatus[4],
+                IsPhotoAmpOutOfSpec = bitArrayAdditionalDeviceStatus[5],
+                IsPhotoDiodeFailed = bitArrayAdditionalDeviceStatus[6],
+                IsDevicePastCalibrationDue = bitArrayAdditionalDeviceStatus[7],
+                IsUnitInLocationBracketMode = bitArrayAdditionalDeviceStatus[8]
             };
 
             return deviceStatus;
+        }
+
+        /// <summary>
+        /// Gets the device status options
+        /// </summary>
+        /// <param name="deviceOptionNumber"></param>
+        /// <returns></returns>
+
+        public static DeviceOptionStatus GetDeviceOptionStatus(int deviceOptionNumber)
+        {
+            var bitArray = ConvertLowRegisterIntToBits(deviceOptionNumber);
+
+            DeviceOptionStatus deviceOptionStatus = new DeviceOptionStatus()
+            {
+                IsFastDownloadEnabled = bitArray[5],
+                IsLocationBracketEnabled = bitArray[6],
+                IsSoftwareControlledRGBEnabled = bitArray[0],   
+            };
+
+            return deviceOptionStatus;
+        }
+
+        /// <summary>
+        ///  Checks if a hold time or sample time only needs to return low register
+        /// </summary>
+        /// <param name="highRegisterValue"></param>
+        /// <returns></returns>
+        public static bool CheckIfOnlyReturnLowRegisterSampleHold(int highRegisterValue)
+        {
+            if (highRegisterValue == 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sampleStatusNumber"></param>
+        /// <returns></returns>
+        public static SampleStatusWord GetSampleStatusWord(int sampleStatusNumber)
+        {
+            var bitArray = ConvertLowRegisterIntToBits(sampleStatusNumber);
+
+            SampleStatusWord sampleStatusWord = new SampleStatusWord()
+            {
+                IsBadLaser = bitArray[0],
+                IsBadFlow = bitArray[1],
+                IsParticleOverFlow = bitArray[2],
+                IsMalfunctionDetected = bitArray[3],
+                IsThresholdHighStatusExceeded = bitArray[4],
+                IsThresholdLowStatusExceeded = bitArray[5],
+                IsSamplerError = bitArray[6]
+            };
+
+            return sampleStatusWord;
         }
 
         /// <summary>
@@ -105,7 +181,6 @@ namespace ParticleCommunicator.Helpers
             {
                 throw new ModbusException("Record data index cant be greater than total data record count");
             }
-
         }
 
         /// <summary>

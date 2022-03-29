@@ -5,19 +5,127 @@ using ParticleCommunicator.Communicator;
 using ParticleCommunicator.Helpers;
 using ParticleCommunicator.Models;
 using System.Collections;
+using System.Diagnostics;
 
 ModbusClient e = new ModbusClient();
 
 // connection
-e.Connect("192.168.0.14", 502);
+ //e.Connect("192.168.0.14", 502); //home Ip
+ //e.Connect("10.8.4.61", 502);
+//e.WriteSingleRegister(1,12);
+
+//var inputs = e.ReadHoldingRegisters(3008,4);
+
+// -------------------------------- Phillips Libary ------------------------------
+ParticleCommunicatorApexR5p apex = new ParticleCommunicatorApexR5p();
+
+apex.ConnectToModbusDevice("192.168.0.14", 502);
+
+//apex.SetParticleChannelEnableStatus(ParticleCommunicatorApexR5p.ParticleChannel.ParticleChannel1, ParticleCommunicatorApexR5p.ChannelStatusValue.DisableChannel);
+
+//apex.SetAlarmForChannel(ParticleCommunicatorApexR5p.ParticleChannel.ParticleChannel1, ParticleCommunicatorApexR5p.AlarmStatusValue.DisableAlarm);
+
+//var holdTime = apex.GetHoldTime();
+//var sampleTime = apex.GetSampleTime();
+
+apex.StopInstrument();
+
+apex.ClearAllDataRecords();
+
+Thread.Sleep(2000);
+
+apex.StartInstrument();
+
+List<ParticleDataRecord> list = new List<ParticleDataRecord>();
+
+apex.GetParticleDataRecords(2, ref list);
+
+
+////var sampleStatusHoldings1 = e.ReadInputRegisters(6,1)[0];
+////var sampleStatusHoldings2 = e.ReadInputRegisters(7,2)[0];
+
+////var bitArrayHigh = new BitArray(new int[] { sampleStatusHoldings1 });
+////var bitArrayLow = new BitArray(new int[] { sampleStatusHoldings2 });
+
+////var sampleTimeInSeconds = EasyModbus.ModbusClient.ConvertRegistersToInt(e.ReadInputRegisters(0, 2), ModbusClient.RegisterOrder.HighLow);
+////var sampleTimeConverted = new DateTime(1970, 1, 1).AddSeconds(sampleTimeInSeconds);
+////var sampleStatus = EasyModbus.ModbusClient.ConvertRegistersToInt(e.ReadInputRegisters(6, 2), ModbusClient.RegisterOrder.HighLow);
+////var location = EasyModbus.ModbusClient.ConvertRegistersToInt(e.ReadInputRegisters(4, 2), ModbusClient.RegisterOrder.HighLow);
+////var particleChannel1Count = EasyModbus.ModbusClient.ConvertRegistersToInt(e.ReadInputRegisters(8, 2), ModbusClient.RegisterOrder.HighLow);
+////var particleChannel2Count = EasyModbus.ModbusClient.ConvertRegistersToInt(e.ReadInputRegisters(10, 2), ModbusClient.RegisterOrder.HighLow);
+
+////ModBusClientTester.DataRecord record = new ModBusClientTester.DataRecord()
+////{
+////    SampleTime = sampleTimeConverted.ToString(),
+////    Location = location,
+////    SampleStatus = sampleStatus,
+////    ParticalChannel1Count = particleChannel1Count,
+////    ParticalChannel2Count = particleChannel2Count
+////};
+
+////Console.WriteLine($"Sample time:" +
+////    $"{record.SampleTime} \n" +
+////    $"Location: {record.Location} \n" +
+////    $"Sample Status: " +
+////    $"{record.SampleStatus} \n" +
+////    $"Particle channel 1 Count: {record.ParticalChannel1Count} \n" +
+////    $"Particle channel 2 Count {record.ParticalChannel2Count}");
+
+// ---------------------- Last Sample Time Stamp ----------------------------
+
+//var SampleTimeStampRegisters = e.ReadHoldingRegisters(59, 2);
+
+//var testers = EasyModbus.ModbusClient.ConvertRegistersToInt(SampleTimeStampRegisters, ModbusClient.RegisterOrder.HighLow);
+//var dateTime2 = new DateTime(1970, 1, 1);
+//var datetimeReal = dateTime2.AddSeconds(testers);
+
+// -------------------- Last settings change ------------------------------
+//var SettingsChangeRegisters = e.ReadHoldingRegisters(61, 2);
+
+//var testers1 = EasyModbus.ModbusClient.ConvertRegistersToInt(SettingsChangeRegisters, ModbusClient.RegisterOrder.HighLow);
+//var dateTime3 = new DateTime(1970, 1, 1);
+//var datetimeReal1 = dateTime3.AddSeconds(testers1);
+
+// -------------------------- Last calibration date -----------------------------
+
+/*var calibrationDuedateHoldingsRegisters = e.ReadHoldingRegisters(73 , 2);
+var testers = EasyModbus.ModbusClient.ConvertRegistersToInt(calibrationDuedateHoldingsRegisters, ModbusClient.RegisterOrder.HighLow);
+var dateTime2 = new DateTime(1970, 1, 1);
+var datetimeReal = dateTime2.AddSeconds(testers);Ø*/
+
+
+// ----------------------------- Serial number ---------------------------
+//var serialRegisters = e.ReadHoldingRegisters(57,2);
+
+//var inter = EasyModbus.ModbusClient.ConvertRegistersToInt(serialRegisters, ModbusClient.RegisterOrder.HighLow);
+
+
+//var serialRegisters1 = e.ReadHoldingRegisters(4, 2);
+
+//var inter1 = EasyModbus.ModbusClient.ConvertRegistersToInt(serialRegisters1, ModbusClient.RegisterOrder.HighLow);
+
+// ------------------------ Device options -----------------------------
+
+//var deviceOptionsRegisters = e.ReadHoldingRegisters(49, 1);
+
+// ------------------------- Calibration due date --------------------------------
+
+//var calibrationDuedateHoldingsRegisters = e.ReadHoldingRegisters(46 , 2);
+//var testers = EasyModbus.ModbusClient.ConvertRegistersToInt(calibrationDuedateHoldingsRegisters, ModbusClient.RegisterOrder.HighLow);
+//var dateTime2 = new DateTime(1970, 1, 1);
+//var datetimeReal = dateTime2.AddSeconds(testers);
+
 
 // Turn off/on
 //e.WriteSingleRegister(1,12);
 
+//Thread.Sleep(2000);
+
+//e.WriteSingleRegister(1,11);
 
 // -------------------- Initial Delay --------------------------
 
-var holdingInitialDelay = e.ReadHoldingRegisters(28,2);
+//var holdingInitialDelay = e.ReadHoldingRegisters(28,2);
 
 // --------------------------- Flow rate -----------------------
 
@@ -107,6 +215,12 @@ var tester6 = EasyModbus.ModbusClient.ConvertRegistersToString(modelHoldingRegis
 var tester7 = EasyModbus.ModbusClient.ConvertRegistersToString(modelHoldingRegister7, 0, 2);
 var tester8 = EasyModbus.ModbusClient.ConvertRegistersToString(modelHoldingRegister8, 0, 2);
 
+<<<<<<< HEAD
+var registers = BitConverter.GetBytes(productHoldingRegisters[0]);
+byte[] registerResult = new byte[2];
+registerResult[0] = registers[1];
+registerResult[1] = registers[0];
+=======
 var concat = $"{tester1}{tester2}" +
                    $"{tester3}{tester4}" +
                    $"{tester5}{tester6}" +
@@ -118,6 +232,7 @@ var index = concat.Replace("\0", string.Empty);*/
 //byte[] registerResult = new byte[2];
 //registerResult[0] = registers[1];
 //registerResult[1] = registers[0];
+
 
 //var no2 = System.Text.Encoding.Default.GetString(registerResult);
 
@@ -163,29 +278,7 @@ var rose = new DateTime(1970, 1, 1).AddSeconds(tests);*/
 //e.WriteSingleRegister(1, 4);
 
 // Get latest sample data as object
-var sampleTimeInSeconds = EasyModbus.ModbusClient.ConvertRegistersToInt(e.ReadInputRegisters(0, 2), ModbusClient.RegisterOrder.HighLow);
-var sampleTimeConverted = new DateTime(1970, 1, 1).AddSeconds(sampleTimeInSeconds);
-var sampleStatus = EasyModbus.ModbusClient.ConvertRegistersToInt(e.ReadInputRegisters(6, 2), ModbusClient.RegisterOrder.HighLow);
-var location = EasyModbus.ModbusClient.ConvertRegistersToInt(e.ReadInputRegisters(4, 2), ModbusClient.RegisterOrder.HighLow);
-var particleChannel1Count = EasyModbus.ModbusClient.ConvertRegistersToInt(e.ReadInputRegisters(8, 2), ModbusClient.RegisterOrder.HighLow);
-var particleChannel2Count = EasyModbus.ModbusClient.ConvertRegistersToInt(e.ReadInputRegisters(10, 2), ModbusClient.RegisterOrder.HighLow);
 
-ModBusClientTester.DataRecord record = new ModBusClientTester.DataRecord()
-{
-    SampleTime = sampleTimeConverted.ToString(),
-    Location = location,
-    SampleStatus = sampleStatus,
-    ParticalChannel1Count = particleChannel1Count,
-    ParticalChannel2Count = particleChannel2Count
-};
-
-Console.WriteLine($"Sample time:" +
-    $"{record.SampleTime} \n" +
-    $"Location: {record.Location} \n" +
-    $"Sample Status: " +
-    $"{record.SampleStatus} \n" +
-    $"Particle channel 1 Count: {record.ParticalChannel1Count} \n" +
-    $"Particle channel 2 Count {record.ParticalChannel2Count}");
 
 // ------------------------- Write to registers --------------------------
 // Register col is col -1 

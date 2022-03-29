@@ -24,6 +24,8 @@ C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\obj\Debug\net6.0\Mod
 C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\obj\Debug\net6.0\ref\ModBusClientTester.dll
 C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\obj\Debug\net6.0\ModBusClientTester.pdb
 C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\obj\Debug\net6.0\ModBusClientTester.genruntimeconfig.cache
+C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\bin\Debug\net6.0\ParticleCommunicator.dll
+C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\bin\Debug\net6.0\ParticleCommunicator.pdb
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\ModBusClientTester.exe
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\ModBusClientTester.deps.json
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\ModBusClientTester.runtimeconfig.json
@@ -38,6 +40,8 @@ C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\De
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\runtimes\unix\lib\net6.0\System.IO.Ports.dll
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.IO.Ports.dll
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\ModbusDriver.dll
+C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\ParticleCommunicator.dll
+C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\ParticleCommunicator.pdb
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\ModbusDriver.pdb
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\obj\Debug\net6.0\ModBusClientTester.csproj.AssemblyReference.cache
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\obj\Debug\net6.0\ModBusClientTester.GeneratedMSBuildEditorConfig.editorconfig
@@ -50,5 +54,3 @@ C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\obj\De
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\obj\Debug\net6.0\ModBusClientTester.pdb
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\obj\Debug\net6.0\ModBusClientTester.genruntimeconfig.cache
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\obj\Debug\net6.0\ref\ModBusClientTester.dll
-C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\bin\Debug\net6.0\ParticleCommunicator.dll
-C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\bin\Debug\net6.0\ParticleCommunicator.pdb

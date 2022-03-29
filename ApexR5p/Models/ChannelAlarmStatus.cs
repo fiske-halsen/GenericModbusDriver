@@ -1,6 +1,6 @@
 ﻿namespace ParticleCommunicator.Models
 {
-    public class AlarmStatus
+    public class ChannelAlarmStatus
     {
         public bool IsChannelEnabled { get; set; }
         public bool IsAlarmEnabled { get; set; }
