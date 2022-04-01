@@ -6,24 +6,80 @@ using ParticleCommunicator.Helpers;
 using ParticleCommunicator.Models;
 using System.Collections;
 using System.Diagnostics;
+using System.Net.Sockets;
 
-ModbusClient e = new ModbusClient();
-
+//ModbusClient e = new ModbusClient();
 
 // connection
- e.Connect("192.168.0.14", 502); //home Ip
-                                 //e.Connect("10.8.4.61", 502);
-                                 //e.WriteSingleRegister(1,12);
+//e.Connect("192.168.0.14", 502); //home Ip
+//e.Connect("10.8.4.61", 502);
+//e.WriteSingleRegister(1,12);
+
+//var test1 = new RegisterClass()
+//{
+//    RegisterNumber = 1,
+//    RegisterValue = 3
+
+//};
+
+//var test2 = new RegisterClass()
+//{
+//    RegisterNumber = 1,
+//    RegisterValue = 2
+
+//};
+
+//var isEqual = test1.Equals(test2);
+
+// Small script to find changed Registers :D
+
+//List<RegisterClass> listBefore = new List<RegisterClass>();
+//List<RegisterClass> listAfter = new List<RegisterClass>();
+//List<RegisterClass> finalList = new List<RegisterClass>();
 
 
-for(int i = 1000; i <= 9999; i+= 100)
-{
-    var holdingsTest = e.ReadHoldingRegisters(i, 100);
-}
+//// 1. Before the ip address change
+//for (int i = 0; i < 9999; i++)
+//{
+//    var holdingsTest = e.ReadHoldingRegisters(i, 1);
+//    listBefore.Add(new RegisterClass()
+//    {
+//        RegisterNumber = i,
+//        RegisterValue = holdingsTest[0]
+//    });
+//}
 
+//e.Disconnect();
 
-//var inputs = e.ReadHoldingRegisters(3008,4);
-return; 
+//Thread.Sleep(10000);
+
+//e.Connect("192.168.0.18", 502);
+
+//for (int i = 0; i < 9999; i++)
+//{
+//    var holdingsTest = e.ReadHoldingRegisters(i, 1);
+//    listAfter.Add(new RegisterClass()
+//    {
+//        RegisterNumber = i,
+//        RegisterValue = holdingsTest[0]
+//    });
+//}
+
+//var hello = "";
+
+//Console.WriteLine("yeeeee");
+//var differences = listBefore.Except(listAfter).Concat(listAfter.Except(listBefore));
+
+//Console.WriteLine("yeeeeeeeeeeeeEVENMORE");
+//foreach (var item in differences)
+//{
+//    Console.WriteLine($"Register number: {item.RegisterNumber}");
+//    Console.WriteLine($"Register number: {item.RegisterValue}");
+//}
+
+////var inputs = e.ReadHoldingRegisters(3008,4);
+//return;
+
 // -------------------------------- Phillips Libary ------------------------------
 ParticleCommunicatorApexR5p apex = new ParticleCommunicatorApexR5p();
 
@@ -36,30 +92,36 @@ apex.ConnectToModbusDevice("192.168.0.14", 502);
 //var holdTime = apex.GetHoldTime();
 //var sampleTime = apex.GetSampleTime();
 
-apex.StopInstrument();
-
-apex.ClearAllDataRecords();
-
-Thread.Sleep(2000);
-
-apex.StartInstrument();
-
-List<ParticleDataRecord> list = new List<ParticleDataRecord>();
-
-Debug.WriteLine("Started.....");
-
-apex.ParticleDataRecordEvent += new Subscriber().OnMyEventRaised;
+// ---------------------------- ALL METHODS TESTING --------------------------------------
 
 
-await apex.RaiseParticleDataRecordEvent(2);
+// ------------------------------------- LIVE SAMPLING TEST -------------------------------
 
-Debug.Write(list.Count);
+//apex.stopinstrument();
 
-foreach (var item in list)
-{
-    Debug.WriteLine("particle channel 1 " + item.ParticalChannel1Count);
-    Debug.WriteLine("particle channel 2 " + item.ParticalChannel2Count);
-}
+//apex.clearalldatarecords();
+
+//thread.sleep(2000);
+
+//apex.startinstrument();
+
+//list<particledatarecord> list = new list<particledatarecord>();
+
+//debug.writeline("started.....");
+
+//apex.particledatarecordevent += new subscriber().onmyeventraised;
+
+//await apex.getparticledata(2);
+
+//debug.write(list.count);
+
+//foreach (var item in list)
+//{
+//    debug.writeline("particle channel 1 " + item.particalchannel1count);
+//    debug.writeline("particle channel 2 " + item.particalchannel2count);
+//}
+
+// ---------------------------------- LIVE SAMPLING END --------------------------------------
 
 ////var sampleStatusHoldings1 = e.ReadInputRegisters(6,1)[0];
 ////var sampleStatusHoldings2 = e.ReadInputRegisters(7,2)[0];

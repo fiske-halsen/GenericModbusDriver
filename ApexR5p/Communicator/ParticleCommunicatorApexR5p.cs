@@ -788,8 +788,19 @@ namespace ParticleCommunicator.Communicator
         /// </summary>
         /// <param name="sampleRate"></param>
         /// <param name="particleRecords"></param>
-        public async Task RaiseParticleDataRecordEvent(int sampleRate)
+        public async Task GetParticleData(int sampleRate, int transMissionRate)
         {
+            var holdTime = GetTotalDataRecordCount();
+            var sampleTime = GetSampleTime();
+
+            // Transmission rate cannot be greater sample time multiplied by sample rate
+            var minTransmissionRate = sampleTime * sampleRate;
+
+            if (transMissionRate > minTransmissionRate)
+            {
+                throw new ModbusException("Transmission rate cannot be greater than sample time multiplied by sample rate");
+            }
+
             // Need to find a way to pause sampling
             var isSampling = true;
 
@@ -799,8 +810,8 @@ namespace ParticleCommunicator.Communicator
             while (isSampling)
             {
                 var totalDataRecords = GetTotalDataRecordCount();
-                var holdTimeMili = GetHoldTime() * 1000;
-                var sampleTimeMili = GetSampleTime() * 1000;
+                var holdTimeMili = holdTime * 1000;
+                var sampleTimeMili = sampleTime * 1000;
 
                 if (particleRecords.Count == sampleRate)
                 {
@@ -851,7 +862,7 @@ namespace ParticleCommunicator.Communicator
                     if (!isNotUnique)
                     {
                         particleRecords.Add(record);
-                        await Task.Delay(1000);
+                        //await Task.Delay(1000);
                     }
                 }
             }
