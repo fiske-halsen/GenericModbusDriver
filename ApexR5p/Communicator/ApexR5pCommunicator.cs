@@ -2,14 +2,13 @@
 using EasyModbus.Exceptions;
 using ParticleCommunicator.Helpers;
 using ParticleCommunicator.Models;
-using System.Diagnostics;
 
 namespace ParticleCommunicator.Communicator
 {
     /// <summary>
     /// Class for communicating with ApexR5P particle counter
     /// </summary>
-    public class ParticleCommunicatorApexR5p
+    public class ApexR5pCommunicator
     {
         #region Classes
         public class ParticleDataRecordArgs : EventArgs
@@ -22,6 +21,7 @@ namespace ParticleCommunicator.Communicator
         private ModbusClient modbusClient;
         private static readonly DateTime defaultDate = new DateTime(1970, 1, 1);
         public event EventHandler<ParticleDataRecordArgs> ParticleDataRecordEvent;
+        public List<ParticleDataRecord> ParticleRecords { get; private set; } = new List<ParticleDataRecord>();
         #endregion
 
         #region Enums
@@ -154,6 +154,11 @@ namespace ParticleCommunicator.Communicator
 
         }
         #endregion
+
+        public ApexR5pCommunicator()
+        {
+
+        }
 
         /// <summary>
         /// Gets the modbus register map version
@@ -780,40 +785,119 @@ namespace ParticleCommunicator.Communicator
             return dos;
         }
 
+        /// <summary>
+        /// Gets the Sample status word for a particle record
+        /// </summary>
+        /// <returns></returns>
+        public SampleStatusWord GetSampleStatusWord()
+        {
+            var sampleStatusRegisters = modbusClient.ReadInputRegisters((int)LowInputRegisters.SampleStatus, 1);
+            return HelperService.GetSampleStatusWord(sampleStatusRegisters[0]);
+        }
+
+        /// <summary>
+        /// Gets the particle count for a given channel
+        /// </summary>
+        /// <param name="particleChannel">The particle channel</param>
+        /// <returns></returns>
+        public int GetParticleChannelCount(ParticleChannel particleChannel)
+        {
+            int[] particleChannelHoldings;
+
+            if (particleChannel.Equals(ParticleChannel.ParticleChannel1))
+            {
+                particleChannelHoldings = modbusClient.ReadInputRegisters((int)HighInputRegisters.ParticleChannel1, 2);
+            }
+            else
+            {
+                particleChannelHoldings = modbusClient.ReadInputRegisters((int)HighInputRegisters.ParticleChannel2, 2);
+
+            }
+            return ModbusClient.ConvertRegistersToInt(particleChannelHoldings, ModbusClient.RegisterOrder.HighLow);
+        }
 
         // Should create a method for each input register attribute
 
         /// <summary>
-        /// Raises an event, create subscribers to get latest sample data
+        /// Method to gather the partcle data
         /// </summary>
-        /// <param name="sampleRate"></param>
-        /// <param name="particleRecords"></param>
-        public async Task GetParticleData(int sampleRate, int transMissionRate)
+        /// <param name="sampleRate">How many samples?</param>
+        /// <param name="particleRecords">The particle Records</param>
+        private async Task GetLatestSampleData(List<ParticleDataRecord> records, int sampleRate)
         {
-            var holdTime = GetTotalDataRecordCount();
-            var sampleTime = GetSampleTime();
-
-            // Transmission rate cannot be greater sample time multiplied by sample rate
-            var minTransmissionRate = sampleTime * sampleRate;
-
-            if (transMissionRate > minTransmissionRate)
-            {
-                throw new ModbusException("Transmission rate cannot be greater than sample time multiplied by sample rate");
-            }
-
-            // Need to find a way to pause sampling
             var isSampling = true;
-
-            // Init list
-            List<ParticleDataRecord> particleRecords = new List<ParticleDataRecord>();
 
             while (isSampling)
             {
                 var totalDataRecords = GetTotalDataRecordCount();
-                var holdTimeMili = holdTime * 1000;
-                var sampleTimeMili = sampleTime * 1000;
 
-                if (particleRecords.Count == sampleRate)
+                if (records.Count == sampleRate)
+                {
+                    isSampling = false;
+                }
+
+                if (totalDataRecords > 0)
+                {
+                    var sampleTimeStamp = GetLastSampleTimeStamp();
+                    var currentSampleTimeInSeconds = GetSampleTime();
+                    var sampleStatusWord = GetSampleStatusWord();
+                    var location = GetLocationNumber();
+                    var particleChannel1Count = GetParticleChannelCount(ParticleChannel.ParticleChannel1);
+                    var particleChannel2Count = GetParticleChannelCount(ParticleChannel.ParticleChannel2);
+
+                    ParticleDataRecord record = new ParticleDataRecord()
+                    {
+                        SampleTimeStamp = sampleTimeStamp,
+                        Location = location,
+                        SampleTime = currentSampleTimeInSeconds,
+                        SampleStatus = sampleStatusWord,
+                        ParticalChannel1Count = particleChannel1Count,
+                        ParticalChannel2Count = particleChannel2Count
+                    };
+
+                    var isNotUnique = records.Any(record => DateTime.Equals(record.SampleTimeStamp, sampleTimeStamp));
+
+                    if (!isNotUnique)
+                    {
+                        records.Add(record);
+                    }
+                }
+            }
+        }
+
+        //--------------------------------------------------
+        // TODO: Find a way to pause sampling next step
+        // -------------------------------------------------
+
+        /// <summary>
+        /// Raises an event, create subscribers to get latest particle data...
+        /// </summary>
+        /// <param name="sampleRate">How many samples pr return?</param>
+        /// <param name="transmissionRate">How often should data be particle records be returned?</param>
+        /// <returns></returns>
+        /// <exception cref="ModbusException"></exception>
+        public async Task GetParticleData(int sampleRate, int transmissionRate)
+        {
+            var particleRecords = new List<ParticleDataRecord>();
+
+            var transMissionRateMili = transmissionRate * 1000;
+            var sampleTimeMili = GetSampleTime() * 1000;
+            var holdTimeMili = GetHoldTime() * 1000;
+
+            var minTransmissionRateMili = (sampleTimeMili * sampleRate) + (holdTimeMili * sampleRate);
+
+            if (transMissionRateMili < minTransmissionRateMili)
+            {
+                throw new ModbusException("Transmission rate cannot be less than sample time multiplied by sample rate");
+            }
+
+            var timer = new System.Timers.Timer(transMissionRateMili);
+
+            await GetLatestSampleData(particleRecords, sampleRate);
+
+            timer.Elapsed += async (sender, e) =>
+            {
+                await Task.Run(async () =>
                 {
                     ParticleDataRecordArgs args = new ParticleDataRecordArgs()
                     {
@@ -823,49 +907,12 @@ namespace ParticleCommunicator.Communicator
                     ParticleDataRecordEvent?.Invoke(null, args);
                     ClearAllDataRecords();
                     particleRecords.Clear();
-                    await Task.Delay(holdTimeMili + sampleTimeMili);
-                }
+                    await GetLatestSampleData(particleRecords, sampleRate);
+                });
+            };
 
-                if (totalDataRecords > 0)
-                {
-                    // Registers
-                    var sampleTimeStampRegister = modbusClient.ReadInputRegisters((int)HighInputRegisters.SampleTimeStamp, 2);
-                    var currentSampleTimeRegister = modbusClient.ReadInputRegisters((int)HighInputRegisters.SampleTimeStamp, 2);
-                    var currentSampleStatusRegisters = modbusClient.ReadInputRegisters((int)LowInputRegisters.SampleStatus, 1);
-                    var sampleStatusRegisters = modbusClient.ReadInputRegisters((int)LowInputRegisters.SampleStatus, 1);
-                    var currentLocationRegisters = modbusClient.ReadInputRegisters((int)HighInputRegisters.Location, 2);
-                    var particleChannel1Registers = modbusClient.ReadInputRegisters((int)HighInputRegisters.ParticleChannel1, 2);
-                    var particleChannel2Registers = modbusClient.ReadInputRegisters((int)HighInputRegisters.ParticleChannel2, 2);
-
-                    // Conversion of registers
-                    var sampleTimeStampSeconds = ModbusClient.ConvertRegistersToInt(sampleTimeStampRegister, ModbusClient.RegisterOrder.HighLow);
-                    var tempDateDefault = defaultDate;
-                    var sampleTimeConverted = tempDateDefault.AddSeconds(sampleTimeStampSeconds);
-                    var currentSampleTimeInSeconds = ModbusClient.ConvertRegistersToInt(currentSampleTimeRegister, ModbusClient.RegisterOrder.HighLow);
-                    var sampleStatusWord = HelperService.GetSampleStatusWord(sampleStatusRegisters[0]);
-                    var location = ModbusClient.ConvertRegistersToInt(currentLocationRegisters, ModbusClient.RegisterOrder.HighLow);
-                    var particleChannel1Count = ModbusClient.ConvertRegistersToInt(particleChannel1Registers, ModbusClient.RegisterOrder.HighLow);
-                    var particleChannel2Count = ModbusClient.ConvertRegistersToInt(particleChannel2Registers, ModbusClient.RegisterOrder.HighLow);
-
-                    ParticleDataRecord record = new ParticleDataRecord()
-                    {
-                        SampleTimeStamp = sampleTimeConverted,
-                        Location = location,
-                        SampleTime = currentSampleTimeInSeconds,
-                        SampleStatus = sampleStatusWord,
-                        ParticalChannel1Count = particleChannel1Count,
-                        ParticalChannel2Count = particleChannel2Count
-                    };
-
-                    var isNotUnique = particleRecords.Any(x => DateTime.Equals(x.SampleTimeStamp, sampleTimeConverted));
-
-                    if (!isNotUnique)
-                    {
-                        particleRecords.Add(record);
-                        //await Task.Delay(1000);
-                    }
-                }
-            }
+            timer.Start();
+            Console.ReadKey();
         }
     }
 }
