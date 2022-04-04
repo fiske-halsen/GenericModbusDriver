@@ -1,7 +1,7 @@
 ﻿using EasyModbus.Exceptions;
 using ParticleCommunicator.Models;
 using System.Collections;
-using static ParticleCommunicator.Communicator.ParticleCommunicatorApexR5p;
+using static ParticleCommunicator.Communicator.ApexR5pCommunicator;
 
 namespace ParticleCommunicator.Helpers
 {
@@ -73,15 +73,16 @@ namespace ParticleCommunicator.Helpers
                 IsInstrumentServiceNeeded = bitArrayDeviceStatus[13],
                 IsHighAlarmThresHoldExceeded = bitArrayDeviceStatus[14],
                 IsLowAlarmThresHoldExceeded = bitArrayDeviceStatus[15],
-                IsLaserCurrentOutOfSpec = bitArrayAdditionalDeviceStatus[0],
-                IsLaserPowerOutOfSpec = bitArrayAdditionalDeviceStatus[1],
+                IsLaserPowerOutOfSpec = bitArrayAdditionalDeviceStatus[0],
+                IsLaserCurrentOutOfSpec = bitArrayAdditionalDeviceStatus[1],
                 IsLaserSupplyOutOfSpec = bitArrayAdditionalDeviceStatus[2],
                 IsLaserLifeStatusOutOfSpec = bitArrayAdditionalDeviceStatus[3],
                 IsUnitsFlowBelowThreshold = bitArrayAdditionalDeviceStatus[4],
                 IsPhotoAmpOutOfSpec = bitArrayAdditionalDeviceStatus[5],
-                IsPhotoDiodeFailed = bitArrayAdditionalDeviceStatus[6],
-                IsDevicePastCalibrationDue = bitArrayAdditionalDeviceStatus[7],
-                IsUnitInLocationBracketMode = bitArrayAdditionalDeviceStatus[8]
+                IsPhotoAmpBackGroundOutOfSpec = bitArrayAdditionalDeviceStatus[6],
+                IsPhotoDiodeFailed = bitArrayAdditionalDeviceStatus[7],
+                IsDevicePastCalibrationDue = bitArrayAdditionalDeviceStatus[8],
+                IsUnitInLocationBracketMode = bitArrayAdditionalDeviceStatus[9],
             };
 
             return deviceStatus;
@@ -101,7 +102,7 @@ namespace ParticleCommunicator.Helpers
             {
                 IsFastDownloadEnabled = bitArray[5],
                 IsLocationBracketEnabled = bitArray[6],
-                IsSoftwareControlledRGBEnabled = bitArray[0],   
+                IsSoftwareControlledRGBEnabled = bitArray[0],
             };
 
             return deviceOptionStatus;
@@ -143,6 +144,26 @@ namespace ParticleCommunicator.Helpers
             };
 
             return sampleStatusWord;
+        }
+
+
+        /// <summary>
+        /// Converts and BitArray to int
+        /// </summary>
+        /// <param name="bitArray"></param>
+        /// <returns></returns>
+        /// <exception cref="ModbusException"></exception>
+        public static int GetIntFromBitArray(BitArray bitArray)
+        {
+            if (bitArray.Length > 32)
+            {
+                throw new ModbusException("Argument length shall be at most 32 bits.");
+            }
+
+            int[] array = new int[1];
+            bitArray.CopyTo(array, 0);
+            return array[0];
+
         }
 
         /// <summary>
@@ -189,7 +210,7 @@ namespace ParticleCommunicator.Helpers
         /// <param name="seconds">The numbe of seconds</param>
         public static void CheckIfValidHoldOrDelayTime(int seconds)
         {
-            if (seconds < DEFAULT_MIN_HOLD_DELAY_TIME || seconds > DEFAULT_MAX_HOLD_DELAY_TIME )
+            if (seconds < DEFAULT_MIN_HOLD_DELAY_TIME || seconds > DEFAULT_MAX_HOLD_DELAY_TIME)
             {
                 throw new ModbusException("Hold/Delay time min = 0, max = 359999");
             }

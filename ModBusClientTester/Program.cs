@@ -8,10 +8,11 @@ using System.Collections;
 using System.Diagnostics;
 using System.Net.Sockets;
 
-//ModbusClient e = new ModbusClient();
+ModbusClient e = new ModbusClient();
 
 // connection
 //e.Connect("192.168.0.14", 502); //home Ip
+
 //e.Connect("10.8.4.61", 502);
 //e.WriteSingleRegister(1,12);
 
@@ -50,11 +51,8 @@ using System.Net.Sockets;
 //}
 
 //e.Disconnect();
-
 //Thread.Sleep(10000);
-
 //e.Connect("192.168.0.18", 502);
-
 //for (int i = 0; i < 9999; i++)
 //{
 //    var holdingsTest = e.ReadHoldingRegisters(i, 1);
@@ -64,7 +62,6 @@ using System.Net.Sockets;
 //        RegisterValue = holdingsTest[0]
 //    });
 //}
-
 //var hello = "";
 
 //Console.WriteLine("yeeeee");
@@ -81,9 +78,76 @@ using System.Net.Sockets;
 //return;
 
 // -------------------------------- Phillips Libary ------------------------------
-ParticleCommunicatorApexR5p apex = new ParticleCommunicatorApexR5p();
+ApexR5pCommunicator apex = new ApexR5pCommunicator();
 
+// Works
 apex.ConnectToModbusDevice("192.168.0.14", 502);
+
+
+// -------------------------------- Phillips Libary test methods ------------------------------
+
+// Works
+//apex.StopInstrument();
+
+// Works
+//apex.StartInstrument();
+
+
+// Works
+//Debug.WriteLine(apex.GetModbusRegisterMapVersion());
+
+// Works
+//Debug.WriteLine(apex.GetFirmwareVersion());
+
+
+// works
+//var deviceStatus  = apex.GetDeviceStatus();
+
+// Works
+//Debug.WriteLine(apex.GetProductName());
+
+// Works
+//Debug.WriteLine(apex.GetModelName());
+
+//Works
+//Debug.WriteLine(apex.GetInstrumentSerialNumber());
+
+// Works
+//apex.DisconnectFromModbusDevice();
+
+
+// Works
+//apex.SaveAllHoldingRegistersToEEPROM();
+
+
+// Works
+//apex.SaveTheInstrumentParameters();
+
+// Works
+//apex.ClearAllDataRecords();    
+
+
+
+
+
+
+
+// -------------------------------- Phillips Libary test methods ------------------------------
+
+
+// --------------------------- Phillips libary for sample data -------------------------
+//apex.StopInstrument();
+
+//apex.ClearAllDataRecords();
+
+//Thread.Sleep(2000);
+
+//apex.StartInstrument();
+//apex.ParticleDataRecordEvent += new ApexR5pSubscriberExample().OnMyEventRaised;
+
+//await apex.GetParticleData(3, 35);
+
+// --------------------------- Phillips libary for sample data -------------------------
 
 //apex.SetParticleChannelEnableStatus(ParticleCommunicatorApexR5p.ParticleChannel.ParticleChannel1, ParticleCommunicatorApexR5p.ChannelStatusValue.DisableChannel);
 
@@ -93,7 +157,6 @@ apex.ConnectToModbusDevice("192.168.0.14", 502);
 //var sampleTime = apex.GetSampleTime();
 
 // ---------------------------- ALL METHODS TESTING --------------------------------------
-
 
 // ------------------------------------- LIVE SAMPLING TEST -------------------------------
 
@@ -327,7 +390,7 @@ var index = concat.Replace("\0", string.Empty);*/
 //e.WriteSingleRegister(1, 12);
 
 // just the stop the execution
-return;
+//return;
 
 /*var dateTime2 = new DateTime(1970, 1, 1);
 var dateTime1 = DateTime.Now;
