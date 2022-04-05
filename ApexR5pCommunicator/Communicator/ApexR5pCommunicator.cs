@@ -983,7 +983,7 @@ namespace ParticleCommunicator.Communicator
                     ParticleDataRecordEvent?.Invoke(null, args);
                     ClearAllDataRecords();
                     particleRecords.Clear();
-                    await Task.Delay(holdTimeMili + sampleTimeMili);
+                    await Task.Delay(holdTimeMili + sampleTimeMili).ConfigureAwait(false);
                 }
 
                 if (totalDataRecords > 0)
