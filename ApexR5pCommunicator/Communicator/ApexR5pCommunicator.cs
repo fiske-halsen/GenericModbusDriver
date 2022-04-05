@@ -282,10 +282,10 @@ namespace ParticleCommunicator.Communicator
         /// </summary>
         /// <param name="ipAddress"></param>
         /// <param name="port"></param>
-        public void ConnectToModbusDevice(string ipAddress, int port)
+        public void ConnectToModbusDevice(string ipAddress)
         {
             modbusClient = new ModbusClient();
-            modbusClient.Connect(ipAddress, port);
+            modbusClient.Connect(ipAddress);
         }
 
         /// <summary>
@@ -825,7 +825,7 @@ namespace ParticleCommunicator.Communicator
             return ModbusClient.ConvertRegistersToInt(particleChannelHoldings, ModbusClient.RegisterOrder.HighLow);
         }
 
-        // Should create a method for each input register attribute
+        /*// Should create a method for each input register attribute
 
         /// <summary>
         /// Method to gather the partcle data
@@ -949,7 +949,71 @@ namespace ParticleCommunicator.Communicator
                 }
             };
 
-            Console.ReadKey();
+        }*/
+
+        /// <summary>
+        /// Raises an event, create subscribers to get latest sample data
+        /// </summary>
+        /// <param name="sampleRate"></param>
+        /// <param name="particleRecords"></param>
+        public async Task GetParticleData(int sampleRate)
+        {
+            var holdTime = GetTotalDataRecordCount();
+            var sampleTime = GetSampleTime();
+
+            // Need to find a way to pause sampling
+            var isSampling = true;
+
+            // Init list
+            List<ParticleDataRecord> particleRecords = new List<ParticleDataRecord>();
+
+            while (isSampling)
+            {
+                var totalDataRecords = GetTotalDataRecordCount();
+                var holdTimeMili = holdTime * 1000;
+                var sampleTimeMili = sampleTime * 1000;
+
+                if (particleRecords.Count == sampleRate)
+                {
+                    ParticleDataRecordArgs args = new ParticleDataRecordArgs()
+                    {
+                        ParticleRecords = particleRecords
+                    };
+
+                    ParticleDataRecordEvent?.Invoke(null, args);
+                    ClearAllDataRecords();
+                    particleRecords.Clear();
+                    await Task.Delay(holdTimeMili + sampleTimeMili);
+                }
+
+                if (totalDataRecords > 0)
+                {
+                    // Registers
+                    var sampleTimeStamp = GetLastSampleTimeStamp();
+                    var currentSampleTimeInSeconds = GetSampleTime();
+                    var sampleStatusWord = GetSampleStatusWord();
+                    var location = GetLocationNumber();
+                    var particleChannel1Count = GetParticleChannelCount(ParticleChannel.ParticleChannel1);
+                    var particleChannel2Count = GetParticleChannelCount(ParticleChannel.ParticleChannel2);
+
+                    ParticleDataRecord record = new ParticleDataRecord()
+                    {
+                        SampleTimeStamp = sampleTimeStamp,
+                        Location = location,
+                        SampleTime = currentSampleTimeInSeconds,
+                        SampleStatus = sampleStatusWord,
+                        ParticalChannel1Count = particleChannel1Count,
+                        ParticalChannel2Count = particleChannel2Count
+                    };
+
+                    var isNotUnique = particleRecords.Any(x => DateTime.Equals(x.SampleTimeStamp, sampleTimeStamp));
+
+                    if (!isNotUnique)
+                    {
+                        particleRecords.Add(record);
+                    }
+                }
+            }
         }
     }
 }

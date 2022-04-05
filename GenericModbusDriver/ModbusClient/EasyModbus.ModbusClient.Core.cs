@@ -59,7 +59,7 @@ namespace EasyModbus
         /// <summary>
         /// Establish connection to Master device in case of Modbus TCP.
         /// </summary>
-        public void Connect(string ipAddress, int port)
+        public void Connect(string ipAddress, int port = 502)
         {
             if (!udpFlag)
             {
