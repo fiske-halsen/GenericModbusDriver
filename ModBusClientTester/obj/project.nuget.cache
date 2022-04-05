@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "KucqBRFPR4HV95jMSzSooU9I4jYuFVTDp+uhqucpI/MT3z+KT4JwatvHnaIrSPbEylPmzIuV4C2muY/4IEkItw==",
+  "dgSpecHash": "GdQnp/s3c8w13LjDOLinWKwkiL+4hokfE1TPFS6YV++wsP5gshHyXg2MnmUkBvYsIyv6suU0yHm5QD2ITpPiUQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\phia\\Desktop\\ModbusDriver\\GenericModbusDriver\\ModBusClientTester\\ModBusClientTester.csproj",
   "expectedPackageFiles": [

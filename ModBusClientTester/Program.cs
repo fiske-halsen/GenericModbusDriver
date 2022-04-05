@@ -7,23 +7,24 @@ using ParticleCommunicator.Models;
 using System.Collections;
 using System.Diagnostics;
 
-ModbusClient e = new ModbusClient();
+//ModbusClient e = new ModbusClient();
 
 // connection
 //e.Connect("192.168.0.14", 502); home Ip
- e.Connect("10.8.4.61", 502);
+ //e.Connect("10.8.4.61", 502);
 //e.WriteSingleRegister(1,12);
 
-var inputs = e.ReadInputRegisters(1008,4);
+//var inputs = e.ReadInputRegisters(1008,4);
 
 
 // -------------------------------- Phillips Libary ------------------------------
 
 ParticleCommunicatorApexR5p apex = new ParticleCommunicatorApexR5p();
 
-//apex.ConnectToModbusDevice("10.8.4.61", 502);
+apex.ConnectToModbusDevice("10.8.4.61", 502);
 
-//apex.StopInstrument();
+apex.StartInstrument();
+
 
 //apex.ClearAllDataRecords();
 
@@ -291,9 +292,9 @@ var rose = new DateTime(1970, 1, 1).AddSeconds(tests);*/
 //bool[] readCoils = e.ReadCoils(30, 1);
 
 // -------------------------- Holding registers -------------------- 
-int[] readHoldingRegisters = e.ReadInputRegisters(44, 2);  //Read 10 Holding Registers from Server, starting with Address 1
+//int[] readHoldingRegisters = e.ReadInputRegisters(44, 2);  //Read 10 Holding Registers from Server, starting with Address 1
 
-int[] newest = { readHoldingRegisters[1], readHoldingRegisters[0] };
+//int[] newest = { readHoldingRegisters[1], readHoldingRegisters[0] };
 
 //dt = dt.AddSeconds(-dt.Second);
 
@@ -322,6 +323,6 @@ int[] newest = { readHoldingRegisters[1], readHoldingRegisters[0] };
 // Console.WriteLine(tester);
 
 
-e.Disconnect();                                                //Disconnect from Server
+//e.Disconnect();                                                //Disconnect from Server
 Console.Write("Press any key to continue . . . ");
 Console.ReadKey(true);
