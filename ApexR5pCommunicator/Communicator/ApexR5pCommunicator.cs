@@ -22,10 +22,10 @@ namespace ParticleCommunicator.Communicator
             public List<ParticleDataRecord> ParticleRecords { get; set; }
         }
 
-    #endregion
+        #endregion
 
-    #region Class Variables
-    private ModbusClient modbusClient;
+        #region Class Variables
+        private ModbusClient modbusClient;
 
         private static readonly DateTime defaultDate = new DateTime(1970, 1, 1);
         public event EventHandler<ParticleDataRecordArgs> ParticleDataRecordEvent;
@@ -382,7 +382,9 @@ namespace ParticleCommunicator.Communicator
         /// <param name="dateTime">The date time for the instrument configuration</param>
         public void SetInstrumentTime(DateTime dateTime)
         {
-            var diffInSeconds = (dateTime - defaultDate).TotalSeconds;
+            var date = new DateTime(1970, 1, 1);
+
+            var diffInSeconds = (dateTime - date).TotalSeconds;
 
             // Split up the diff in seconds to two 2 byte objects
             var highLowRegisters = ModbusClient.ConvertIntToRegisters((int)diffInSeconds, ModbusClient.RegisterOrder.HighLow);
@@ -407,10 +409,10 @@ namespace ParticleCommunicator.Communicator
         /// <summary>
         /// Method that sets the location id
         /// </summary>
-        /// <param name="LocationNumber">Location number</param>
-        public void SetLocationNumber(int LocationNumber)
+        /// <param name="locationNumber">Location number</param>
+        public void SetLocationNumber(int locationNumber)
         {
-            modbusClient.WriteSingleRegister((int)SingleRegisters.LocationNumber, LocationNumber);
+            modbusClient.WriteSingleRegister((int)SingleRegisters.LocationNumber, locationNumber);
         }
         /// <summary>
         /// Gets the current hold time
@@ -418,11 +420,11 @@ namespace ParticleCommunicator.Communicator
         /// <returns>Hold time</returns>
         public int GetHoldTime()
         {
-            var holdTimeRegisters = modbusClient.ReadHoldingRegisters((int)LowHoldingRegisters.HoldTime, 2);
+            var holdTimeRegisters = modbusClient.ReadHoldingRegisters((int)HighHoldingRegisters.HoldTime, 2);
             var lowRegister = holdTimeRegisters[0];
             var highRegister = holdTimeRegisters[1];
 
-            var onlyLowRegister = HelperService.CheckIfOnlyReturnLowRegisterSampleHold(highRegister);
+            var onlyLowRegister = HelperService.CheckIfOnlyReturnLowRegister(highRegister);
 
             if (onlyLowRegister)
             {
@@ -448,8 +450,7 @@ namespace ParticleCommunicator.Communicator
             // check if hold time in seconds only has to be written to the low register
             if (isOnlyLowRegister)
             {
-                modbusClient.WriteSingleRegister((int)LowHoldingRegisters.HoldTime, holdTimeLowRegisterSeconds);
-
+                modbusClient.WriteSingleRegister((int)LowHoldingRegisters.HoldTime, holdTimeInSeconds);
             }
             else
             {
@@ -465,11 +466,11 @@ namespace ParticleCommunicator.Communicator
         /// <returns> The sample time</returns>
         public int GetSampleTime()
         {
-            var sampleRegisters = modbusClient.ReadHoldingRegisters((int)LowHoldingRegisters.SampleTime, 2);
+            var sampleRegisters = modbusClient.ReadHoldingRegisters((int)HighHoldingRegisters.SampleTime, 2);
             var lowRegister = sampleRegisters[0];
             var highRegister = sampleRegisters[1];
 
-            var isOnlyLow = HelperService.CheckIfOnlyReturnLowRegisterSampleHold(highRegister);
+            var isOnlyLow = HelperService.CheckIfOnlyReturnLowRegister(highRegister);
 
             if (isOnlyLow)
             {
@@ -505,13 +506,12 @@ namespace ParticleCommunicator.Communicator
 
         }
 
-
         /// <summary>
         /// Checks if a particle channels alarm or channel is enabled
         /// </summary>
         /// <param name="particleChannel">The particle channel</param>
         /// <returns>Boolean if a channels alarm is active or not</returns>
-        public ChannelAlarmStatus CheckIfAlarmAndChannelIsEnabled(ParticleChannel particleChannel)
+        public ChannelAlarmStatus GetChannelAndAlarmStatus(ParticleChannel particleChannel)
         {
             int alarmChannelRegisteNumber;
 
@@ -568,14 +568,36 @@ namespace ParticleCommunicator.Communicator
         public int GetAlarmThresHoldForParticleChannel(ParticleChannel particleChannel)
         {
             int[] alarmThresholdRegisters;
+            int lowRegister;
+            int highRegister;
+
 
             if (particleChannel.Equals(ParticleChannel.ParticleChannel1))
             {
-                alarmThresholdRegisters = modbusClient.ReadHoldingRegisters((int)LowHoldingRegisters.AlarmThresHoldParticleChannel1, 2);
+                alarmThresholdRegisters = modbusClient.ReadHoldingRegisters((int)HighHoldingRegisters.AlarmThresHoldParticleChannel1, 2);
+
+                lowRegister = alarmThresholdRegisters[1];
+                highRegister = alarmThresholdRegisters[0];
+
+                var isOnlyLow = HelperService.CheckIfOnlyReturnLowRegister(highRegister);
+
+                if (isOnlyLow)
+                {
+                    return lowRegister;
+                }
             }
             else
             {
                 alarmThresholdRegisters = modbusClient.ReadHoldingRegisters((int)LowHoldingRegisters.AlarmThresHoldParticleChannel2, 2);
+                lowRegister = alarmThresholdRegisters[1];
+                highRegister = alarmThresholdRegisters[0];
+
+                var isOnlyLow = HelperService.CheckIfOnlyReturnLowRegister(highRegister);
+
+                if (isOnlyLow)
+                {
+                    return lowRegister;
+                }
             }
             return ModbusClient.ConvertRegistersToInt(alarmThresholdRegisters, ModbusClient.RegisterOrder.HighLow);
         }
@@ -598,7 +620,6 @@ namespace ParticleCommunicator.Communicator
             {
                 modbusClient.WriteSingleRegister((int)HighHoldingRegisters.AlarmThresHoldParticleChannel2, convertedThresHoldToRegisters[0]);
                 modbusClient.WriteSingleRegister((int)LowHoldingRegisters.AlarmThresHoldParticleChannel2, convertedThresHoldToRegisters[1]);
-
             }
         }
 
@@ -606,10 +627,12 @@ namespace ParticleCommunicator.Communicator
         /// Gets the instrument flow rate, use the GetInstrumentFlowRateUnit() for the unit
         /// </summary>
         /// <returns>Returns the flow number</returns>
-        public int GetInstrumentFlowRate()
+        public decimal GetInstrumentFlowRate()
         {
             var flowRateHolding = modbusClient.ReadHoldingRegisters((int)SingleRegisters.FlowRate, 1);
-            return flowRateHolding[0] / 100;
+            var flowRate = flowRateHolding[0].ToString() + ",00";
+            var flowRateDecimal = Decimal.Parse(flowRate);
+            return (flowRateDecimal / 100);
         }
 
         /// <summary>
@@ -692,7 +715,6 @@ namespace ParticleCommunicator.Communicator
                 modbusClient.WriteSingleRegister((int)HighHoldingRegisters.InitialDelay, convertedDelaTimeRegisters[0]);
                 modbusClient.WriteSingleRegister((int)LowHoldingRegisters.InitialDelay, convertedDelaTimeRegisters[1]);
             }
-
         }
 
         //---------------------------------- calibration -----------------------------------
@@ -964,6 +986,8 @@ namespace ParticleCommunicator.Communicator
             // Need to find a way to pause sampling
             var isSampling = true;
 
+
+
             // Init list
             List<ParticleDataRecord> particleRecords = new List<ParticleDataRecord>();
 
@@ -983,7 +1007,7 @@ namespace ParticleCommunicator.Communicator
                     ParticleDataRecordEvent?.Invoke(null, args);
                     ClearAllDataRecords();
                     particleRecords.Clear();
-                    await Task.Delay(holdTimeMili + sampleTimeMili);
+                    await Task.Delay(holdTimeMili + sampleTimeMili).ConfigureAwait(false);
                 }
 
                 if (totalDataRecords > 0)

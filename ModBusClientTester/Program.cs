@@ -83,16 +83,19 @@ ParticleCommunicator.Communicator.ApexR5pCommunicator apex = new ParticleCommuni
 // Works
 apex.ConnectToModbusDevice("10.8.4.61");
 
-apex.StartInstrument();
+/*
+apex.StopInstrument();
 
+return;
+apex.StartInstrument();
 Thread.Sleep(2000);
 
 apex.ParticleDataRecordEvent += new ApexR5pSubscriberExample().OnMyEventRaised;
 
 await apex.GetParticleData(3);
+*/
 
-
-// -------------------------------- Phillips Libary test methods ------------------------------
+// -------------------------------- PHILLIPS LIBARY TEST METHODS ------------------------------
 
 // Works
 //apex.StopInstrument();
@@ -134,14 +137,66 @@ await apex.GetParticleData(3);
 // Works
 //apex.ClearAllDataRecords();    
 
+// Works
+//apex.StartLocationValidation();
+
+// Works
+//apex.StopLocationValidation();
+
+//Works
+//apex.StartDataValidation();
+
+// Stop data validation
+//apex.StopDataValidation();
+
+// Works
+//Debug.WriteLine(apex.GetInstrumentTime());
+
+// Works
+//apex.SetInstrumentTime(DateTime.Now);
+
+// Works
+//Debug.WriteLine(apex.GetLocationNumber());
+
+//Works
+//apex.SetLocationNumber(3);
+
+// Works
+//Debug.WriteLine(apex.GetHoldTime());
+
+//Works
+//apex.SetHoldTime(50000);
+
+// Works
+//Debug.WriteLine(apex.GetSampleTime());
+
+// Works
+//apex.SetSampleTime(50000);
+
+// Works
+//var channelAlarmStatus = apex.GetChannelAndAlarmStatus(ApexR5pCommunicator.ParticleChannel.ParticleChannel1);
+
+// Works
+//apex.SetParticleChannelEnableStatus(ApexR5pCommunicator.ParticleChannel.ParticleChannel1, ApexR5pCommunicator.ChannelStatusValue.DisableChannel);
+
+// Works 
+//apex.SetAlarmForChannel(ApexR5pCommunicator.ParticleChannel.ParticleChannel1, ApexR5pCommunicator.AlarmStatusValue.DisableAlarm);
+
+// Works
+//apex.SetAlarmThresHoldForParticleChannel(ApexR5pCommunicator.ParticleChannel.ParticleChannel1, 40000);
+
+// Works
+//apex.SetAlarmThresHoldForParticleChannel(ApexR5pCommunicator.ParticleChannel.ParticleChannel1, 999999);
+//Debug.WriteLine(apex.GetAlarmThresHoldForParticleChannel(ApexR5pCommunicator.ParticleChannel.ParticleChannel1));
+
+// Works
+//Debug.WriteLine(apex.GetInstrumentFlowRate());
 
 
 
+return;
 
-
-
-// -------------------------------- Phillips Libary test methods ------------------------------
-
+// -------------------------------- PHILLIPS LIBARY TEST METHODS END ------------------------------
 
 // --------------------------- Phillips libary for sample data -------------------------
 //apex.StopInstrument();

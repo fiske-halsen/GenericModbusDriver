@@ -113,7 +113,7 @@ namespace ParticleCommunicator.Helpers
         /// </summary>
         /// <param name="highRegisterValue"></param>
         /// <returns></returns>
-        public static bool CheckIfOnlyReturnLowRegisterSampleHold(int highRegisterValue)
+        public static bool CheckIfOnlyReturnLowRegister(int highRegisterValue)
         {
             if (highRegisterValue == 0)
             {
