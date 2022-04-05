@@ -39,10 +39,6 @@ C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\De
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\runtimes\osx-x64\native\libSystem.IO.Ports.Native.dylib
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\runtimes\unix\lib\net6.0\System.IO.Ports.dll
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.IO.Ports.dll
-C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\ModbusDriver.dll
-C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\ParticleCommunicator.dll
-C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\ParticleCommunicator.pdb
-C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\ModbusDriver.pdb
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\obj\Debug\net6.0\ModBusClientTester.csproj.AssemblyReference.cache
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\obj\Debug\net6.0\ModBusClientTester.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\obj\Debug\net6.0\ModBusClientTester.AssemblyInfoInputs.cache
@@ -54,3 +50,7 @@ C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\obj\De
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\obj\Debug\net6.0\ModBusClientTester.pdb
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\obj\Debug\net6.0\ModBusClientTester.genruntimeconfig.cache
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\obj\Debug\net6.0\ref\ModBusClientTester.dll
+C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\ApexR5pCommunicator.dll
+C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\GenericModbusDriver.dll
+C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\ApexR5pCommunicator.pdb
+C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\GenericModbusDriver.pdb

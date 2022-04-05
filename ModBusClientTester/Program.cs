@@ -1,7 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using EasyModbus;
 using ModBusClientTester;
-using ParticleCommunicator.Communicator;
+
 using ParticleCommunicator.Helpers;
 using ParticleCommunicator.Models;
 using System.Collections;
@@ -78,12 +78,12 @@ ModbusClient e = new ModbusClient();
 //return;
 
 // -------------------------------- Phillips Libary ------------------------------
-ApexR5pCommunicator apex = new ApexR5pCommunicator();
+ParticleCommunicator.Communicator.ApexR5pCommunicator apex = new ParticleCommunicator.Communicator.ApexR5pCommunicator();
 
 // Works
-apex.ConnectToModbusDevice("192.168.0.14", 502);
+apex.ConnectToModbusDevice("10.8.4.61", 502);
 
-
+apex.StopInstrument();
 // -------------------------------- Phillips Libary test methods ------------------------------
 
 // Works

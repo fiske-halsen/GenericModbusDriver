@@ -12,8 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ApexR5p\ParticleCommunicator.csproj" />
-    <ProjectReference Include="..\ModbusDriver\ModbusDriver.csproj" />
+    <ProjectReference Include="..\ApexR5pCommunicator\ApexR5pCommunicator.csproj" />
   </ItemGroup>
 
 </Project>

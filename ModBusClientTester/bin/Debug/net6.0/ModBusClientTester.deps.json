@@ -8,8 +8,7 @@
     ".NETCoreApp,Version=v6.0": {
       "ModBusClientTester/1.0.0": {
         "dependencies": {
-          "ModbusDriver": "1.0.0",
-          "ParticleCommunicator": "1.0.0",
+          "ApexR5pCommunicator": "1.0.0",
           "System.IO.Ports": "6.0.0"
         },
         "runtime": {
@@ -95,20 +94,20 @@
           }
         }
       },
-      "ModbusDriver/1.0.0": {
+      "ApexR5pCommunicator/1.0.0": {
+        "dependencies": {
+          "GenericModbusDriver": "1.0.0"
+        },
+        "runtime": {
+          "ApexR5pCommunicator.dll": {}
+        }
+      },
+      "GenericModbusDriver/1.0.0": {
         "dependencies": {
           "System.IO.Ports": "6.0.0"
         },
         "runtime": {
-          "ModbusDriver.dll": {}
-        }
-      },
-      "ParticleCommunicator/1.0.0": {
-        "dependencies": {
-          "ModbusDriver": "1.0.0"
-        },
-        "runtime": {
-          "ParticleCommunicator.dll": {}
+          "GenericModbusDriver.dll": {}
         }
       }
     }
@@ -168,12 +167,12 @@
       "path": "system.io.ports/6.0.0",
       "hashPath": "system.io.ports.6.0.0.nupkg.sha512"
     },
-    "ModbusDriver/1.0.0": {
+    "ApexR5pCommunicator/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "ParticleCommunicator/1.0.0": {
+    "GenericModbusDriver/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
