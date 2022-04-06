@@ -78,13 +78,25 @@ ModbusClient e = new ModbusClient();
 //return;
 
 // -------------------------------- Phillips Libary ------------------------------
-ApexR5pCommunicator apex = new ApexR5pCommunicator();
+ParticleCommunicator.Communicator.ApexR5pCommunicator apex = new ParticleCommunicator.Communicator.ApexR5pCommunicator();
 
 // Works
-apex.ConnectToModbusDevice("192.168.0.14", 502);
+apex.ConnectToModbusDevice("192.168.0.14");
 
+apex.StopInstrument();
 
-// -------------------------------- Phillips Libary test methods ------------------------------
+return;
+
+apex.StartInstrument();
+Thread.Sleep(2000);
+
+apex.ParticleDataRecordEvent += new ApexR5pSubscriberExample().OnMyEventRaised;
+
+await apex.GetParticleData(3);
+
+return;
+
+// -------------------------------- PHILLIPS LIBARY TEST METHODS ------------------------------
 
 // Works
 //apex.StopInstrument();
@@ -126,14 +138,102 @@ apex.ConnectToModbusDevice("192.168.0.14", 502);
 // Works
 //apex.ClearAllDataRecords();    
 
+// Works
+//apex.StartLocationValidation();
+
+// Works
+//apex.StopLocationValidation();
+
+//Works
+//apex.StartDataValidation();
+
+// Stop data validation
+//apex.StopDataValidation();
+
+// Works
+//Debug.WriteLine(apex.GetInstrumentTime());
+
+// Works
+//apex.SetInstrumentTime(DateTime.Now);
+
+// Works
+//Debug.WriteLine(apex.GetLocationNumber());
+
+//Works
+//apex.SetLocationNumber(3);
+
+// Works
+//Debug.WriteLine(apex.GetHoldTime());
+
+//Works
+//apex.SetHoldTime(50000);
+
+// Works
+//Debug.WriteLine(apex.GetSampleTime());
+
+// Works
+//apex.SetSampleTime(50000);
+
+// Works
+//var channelAlarmStatus = apex.GetChannelAndAlarmStatus(ApexR5pCommunicator.ParticleChannel.ParticleChannel1);
+
+// Works
+//apex.SetParticleChannelEnableStatus(ApexR5pCommunicator.ParticleChannel.ParticleChannel1, ApexR5pCommunicator.ChannelStatusValue.DisableChannel);
+
+// Works 
+//apex.SetAlarmForChannel(ApexR5pCommunicator.ParticleChannel.ParticleChannel1, ApexR5pCommunicator.AlarmStatusValue.DisableAlarm);
+
+// Works
+//apex.SetAlarmThresHoldForParticleChannel(ApexR5pCommunicator.ParticleChannel.ParticleChannel1, 40000);
+
+// Works
+//apex.SetAlarmThresHoldForParticleChannel(ApexR5pCommunicator.ParticleChannel.ParticleChannel1, 999999);
+//Debug.WriteLine(apex.GetAlarmThresHoldForParticleChannel(ApexR5pCommunicator.ParticleChannel.ParticleChannel1));
+
+// Works
+//Debug.WriteLine(apex.GetInstrumentFlowRate());
+
+// Works
+//Debug.WriteLine(apex.GetInstrumentFlowRatUnit());
+
+// Works
+//Debug.WriteLine(apex.GetTotalDataRecordCount());
+
+// Works
+//Debug.WriteLine(apex.GetCurrentInitialDelay());
+
+// Works
+//Debug.WriteLine(apex.GetCalibrationDueDate());
+
+// Works
+//Debug.WriteLine(apex.GetLastCalibrationDate());
+
+// Works
+//Debug.WriteLine(apex.GetLastSampleTimeStamp());
+
+// Works
+//Debug.WriteLine(apex.GetLastSettingsChangeTimeStamp());
+
+// Works
+//var deviceOptions = apex.GetDeviceOptionStatus();
+
+// Works
+//var sampleStatusWord = apex.GetSampleStatusWord();
+
+// Works
 
 
 
 
 
 
-// -------------------------------- Phillips Libary test methods ------------------------------
 
+
+
+
+
+
+// -------------------------------- PHILLIPS LIBARY TEST METHODS END ------------------------------
 
 // --------------------------- Phillips libary for sample data -------------------------
 //apex.StopInstrument();

@@ -82,30 +82,30 @@
           }
         }
       },
-      "ModbusDriver/1.0.0": {
+      "ApexR5pCommunicator/1.0.0": {
         "type": "project",
-        "framework": ".NETCoreApp,Version=v6.0",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "dependencies": {
+          "GenericModbusDriver": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/ApexR5pCommunicator.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ApexR5pCommunicator.dll": {}
+        }
+      },
+      "GenericModbusDriver/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
         "dependencies": {
           "System.IO.Ports": "5.0.1"
         },
         "compile": {
-          "bin/placeholder/ModbusDriver.dll": {}
+          "bin/placeholder/GenericModbusDriver.dll": {}
         },
         "runtime": {
-          "bin/placeholder/ModbusDriver.dll": {}
-        }
-      },
-      "ParticleCommunicator/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v6.0",
-        "dependencies": {
-          "ModbusDriver": "1.0.0"
-        },
-        "compile": {
-          "bin/placeholder/ParticleCommunicator.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/ParticleCommunicator.dll": {}
+          "bin/placeholder/GenericModbusDriver.dll": {}
         }
       }
     }
@@ -239,21 +239,20 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "ModbusDriver/1.0.0": {
+    "ApexR5pCommunicator/1.0.0": {
       "type": "project",
-      "path": "../ModbusDriver/ModbusDriver.csproj",
-      "msbuildProject": "../ModbusDriver/ModbusDriver.csproj"
+      "path": "../ApexR5pCommunicator/ApexR5pCommunicator.csproj",
+      "msbuildProject": "../ApexR5pCommunicator/ApexR5pCommunicator.csproj"
     },
-    "ParticleCommunicator/1.0.0": {
+    "GenericModbusDriver/1.0.0": {
       "type": "project",
-      "path": "../ApexR5p/ParticleCommunicator.csproj",
-      "msbuildProject": "../ApexR5p/ParticleCommunicator.csproj"
+      "path": "../GenericModbusDriver/GenericModbusDriver.csproj",
+      "msbuildProject": "../GenericModbusDriver/GenericModbusDriver.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net6.0": [
-      "ModbusDriver >= 1.0.0",
-      "ParticleCommunicator >= 1.0.0",
+      "ApexR5pCommunicator >= 1.0.0",
       "System.IO.Ports >= 6.0.0"
     ]
   },
@@ -284,11 +283,8 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "C:\\Users\\phill\\source\\repos\\ModbusDriver\\ApexR5p\\ParticleCommunicator.csproj": {
-              "projectPath": "C:\\Users\\phill\\source\\repos\\ModbusDriver\\ApexR5p\\ParticleCommunicator.csproj"
-            },
-            "C:\\Users\\phill\\source\\repos\\ModbusDriver\\ModbusDriver\\ModbusDriver.csproj": {
-              "projectPath": "C:\\Users\\phill\\source\\repos\\ModbusDriver\\ModbusDriver\\ModbusDriver.csproj"
+            "C:\\Users\\phill\\source\\repos\\ModbusDriver\\ApexR5pCommunicator\\ApexR5pCommunicator.csproj": {
+              "projectPath": "C:\\Users\\phill\\source\\repos\\ModbusDriver\\ApexR5pCommunicator\\ApexR5pCommunicator.csproj"
             }
           }
         }

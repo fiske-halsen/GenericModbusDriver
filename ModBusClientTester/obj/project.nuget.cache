@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "bxa6la3qXkkfrxCMJwhxrVxOaLgXtbLvSjdId4KubuvsIURpI78Ln1wMfUBD/Y02YJnT0XQWPMxQ+yALPqPAQA==",
+  "dgSpecHash": "n0CWK3rio3nN1lIUwmVojoMwIrRDhJMGP08EakWuQTDRBdfcDRNcOFF9zHWS0B1/rtybWITXDR2QXIMZ81hydg==",
   "success": true,
   "projectFilePath": "C:\\Users\\phill\\source\\repos\\ModbusDriver\\ModBusClientTester\\ModBusClientTester.csproj",
   "expectedPackageFiles": [
