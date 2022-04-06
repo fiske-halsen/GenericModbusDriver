@@ -960,6 +960,7 @@ namespace ParticleCommunicator.Communicator
 
         /// <summary>
         /// Raises an event, create subscribers to get latest sample data
+        /// To stop the while loop set the class variable isSampling = false
         /// </summary>
         /// <param name="sampleRate"></param>
         /// <param name="particleRecords"></param>
@@ -969,6 +970,7 @@ namespace ParticleCommunicator.Communicator
             var initialDelayMili = GetCurrentInitialDelay() * 1000;
             var holdTime = GetTotalDataRecordCount();
             var sampleTime = GetSampleTime();
+            var instrumentSerial = GetInstrumentSerialNumber();
             // Need to find a way to pause sampling
             //var isSampling = true;
             // Init list
@@ -986,6 +988,7 @@ namespace ParticleCommunicator.Communicator
 
                 if (particleRecords.Count == sampleRate)
                 {
+                    ;
                     ParticleDataRecordArgs args = new ParticleDataRecordArgs()
                     {
                         ParticleRecords = particleRecords
@@ -994,8 +997,7 @@ namespace ParticleCommunicator.Communicator
                     ParticleDataRecordEvent?.Invoke(null, args);
                     ClearAllDataRecords();
                     particleRecords.Clear();
-                    await Task.Delay(holdTimeMili + sampleTimeMili)
-                        .ConfigureAwait(false);
+                    
                 }
 
                 if (totalDataRecords > 0)
@@ -1010,6 +1012,7 @@ namespace ParticleCommunicator.Communicator
 
                     ParticleDataRecord record = new ParticleDataRecord()
                     {
+                        InstrumentSerial = instrumentSerial,
                         SampleTimeStamp = sampleTimeStamp,
                         Location = location,
                         SampleTime = currentSampleTimeInSeconds,
@@ -1023,6 +1026,8 @@ namespace ParticleCommunicator.Communicator
                     if (!isNotUnique)
                     {
                         particleRecords.Add(record);
+                        await Task.Delay(initialDelayMili)
+                        .ConfigureAwait(false);
                     }
                 }
             }

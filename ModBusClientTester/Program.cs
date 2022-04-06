@@ -10,8 +10,13 @@ using System.Net.Sockets;
 
 ModbusClient e = new ModbusClient();
 
-// connection
+//// connection
 //e.Connect("192.168.0.14", 502); //home Ip
+
+//var holdings = e.ReadHoldingRegisters(57, 2);
+
+//var converted = ModbusClient.ConvertRegistersToInt(holdings, ModbusClient.RegisterOrder.HighLow);
+
 
 //e.Connect("10.8.4.61", 502);
 //e.WriteSingleRegister(1,12);
@@ -85,16 +90,18 @@ apex.ConnectToModbusDevice("192.168.0.14");
 
 apex.StopInstrument();
 
-return;
+Thread.Sleep(2000);
 
 apex.StartInstrument();
-Thread.Sleep(2000);
+
 
 apex.ParticleDataRecordEvent += new ApexR5pSubscriberExample().OnMyEventRaised;
 
 await apex.GetParticleData(3);
 
-return;
+
+
+//return;
 
 // -------------------------------- PHILLIPS LIBARY TEST METHODS ------------------------------
 
