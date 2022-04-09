@@ -14,10 +14,7 @@ ModbusClient e = new ModbusClient();
 //e.Connect("192.168.0.14", 502); //home Ip
 
 //var holdings = e.ReadHoldingRegisters(57, 2);
-
 //var converted = ModbusClient.ConvertRegistersToInt(holdings, ModbusClient.RegisterOrder.HighLow);
-
-
 //e.Connect("10.8.4.61", 502);
 //e.WriteSingleRegister(1,12);
 
@@ -43,8 +40,6 @@ ModbusClient e = new ModbusClient();
 //List<RegisterClass> listAfter = new List<RegisterClass>();
 //List<RegisterClass> finalList = new List<RegisterClass>();
 
-
-//// 1. Before the ip address change
 //for (int i = 0; i < 9999; i++)
 //{
 //    var holdingsTest = e.ReadHoldingRegisters(i, 1);
@@ -89,25 +84,32 @@ ParticleCommunicator.Communicator.ApexR5pCommunicator apex = new ParticleCommuni
 apex.ConnectToModbusDevice("192.168.0.14");
 
 apex.StopInstrument();
+return;
+//apex.StopDataValidation();
+//apex.StopLocationValidation();
 
-Thread.Sleep(2000);
+//Thread.Sleep(2000);
+//apex.StartLocationValidation();
 
 apex.StartInstrument();
 
-
 apex.ParticleDataRecordEvent += new ApexR5pSubscriberExample().OnMyEventRaised;
+
+ Task.Run(() =>
+{
+    Thread.Sleep(60000);
+    apex.isSampling = false;
+});
 
 await apex.GetParticleData(3);
 
-
+Debug.WriteLine("IsSampling: " + apex.isSampling);
 
 //return;
 
 // -------------------------------- PHILLIPS LIBARY TEST METHODS ------------------------------
 
 // Works
-//apex.StopInstrument();
-
 // Works
 //apex.StartInstrument();
 
@@ -228,16 +230,6 @@ await apex.GetParticleData(3);
 //var sampleStatusWord = apex.GetSampleStatusWord();
 
 // Works
-
-
-
-
-
-
-
-
-
-
 
 
 // -------------------------------- PHILLIPS LIBARY TEST METHODS END ------------------------------

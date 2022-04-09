@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using static ParticleCommunicator.Communicator.ApexR5pCommunicator;
 
 namespace ParticleCommunicator.Communicator

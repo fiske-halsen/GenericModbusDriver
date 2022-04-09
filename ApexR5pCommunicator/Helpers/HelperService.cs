@@ -2,7 +2,6 @@
 using ParticleCommunicator.Models;
 using System;
 using System.Collections;
-using static ParticleCommunicator.Communicator.ApexR5pCommunicator;
 
 namespace ParticleCommunicator.Helpers
 {
@@ -175,7 +174,6 @@ namespace ParticleCommunicator.Helpers
             int[] array = new int[1];
             bitArray.CopyTo(array, 0);
             return array[0];
-
         }
 
         /// <summary>

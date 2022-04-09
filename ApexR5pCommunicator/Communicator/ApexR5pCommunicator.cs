@@ -1,13 +1,10 @@
 ﻿using EasyModbus;
-using EasyModbus.Exceptions;
 using ParticleCommunicator.Helpers;
 using ParticleCommunicator.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Timers;
 
 namespace ParticleCommunicator.Communicator
 {
@@ -21,7 +18,6 @@ namespace ParticleCommunicator.Communicator
         {
             public List<ParticleDataRecord> ParticleRecords { get; set; }
         }
-
         #endregion
 
         #region Class Variables
@@ -971,20 +967,16 @@ namespace ParticleCommunicator.Communicator
             var holdTime = GetTotalDataRecordCount();
             var sampleTime = GetSampleTime();
             var instrumentSerial = GetInstrumentSerialNumber();
-            // Need to find a way to pause sampling
-            //var isSampling = true;
-            // Init list
+            var holdTimeMili = holdTime * 1000;
+            var sampleTimeMili = sampleTime * 1000;
             List<ParticleDataRecord> particleRecords = new List<ParticleDataRecord>();
 
-            // Task delay for initial delay, should only run first time
             await Task.Delay(initialDelayMili)
                 .ConfigureAwait(false);
 
             while (isSampling)
             {
                 var totalDataRecords = GetTotalDataRecordCount();
-                var holdTimeMili = holdTime * 1000;
-                var sampleTimeMili = sampleTime * 1000;
 
                 if (particleRecords.Count == sampleRate)
                 {
@@ -997,12 +989,12 @@ namespace ParticleCommunicator.Communicator
                     ParticleDataRecordEvent?.Invoke(null, args);
                     ClearAllDataRecords();
                     particleRecords.Clear();
-                    
+                    await Task.Delay(holdTimeMili + sampleTimeMili)
+                       .ConfigureAwait(false);
                 }
 
                 if (totalDataRecords > 0)
                 {
-                    // Registers
                     var sampleTimeStamp = GetLastSampleTimeStamp();
                     var currentSampleTimeInSeconds = GetSampleTime();
                     var sampleStatusWord = GetSampleStatusWord();
@@ -1026,8 +1018,7 @@ namespace ParticleCommunicator.Communicator
                     if (!isNotUnique)
                     {
                         particleRecords.Add(record);
-                        await Task.Delay(initialDelayMili)
-                        .ConfigureAwait(false);
+
                     }
                 }
             }
