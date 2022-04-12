@@ -63,7 +63,6 @@ ModbusClient e = new ModbusClient();
 //    });
 //}
 //var hello = "";
-
 //Console.WriteLine("yeeeee");
 //var differences = listBefore.Except(listAfter).Concat(listAfter.Except(listBefore));
 
@@ -76,32 +75,32 @@ ModbusClient e = new ModbusClient();
 
 ////var inputs = e.ReadHoldingRegisters(3008,4);
 //return;
-
 // -------------------------------- Phillips Libary ------------------------------
 ParticleCommunicator.Communicator.ApexR5pCommunicator apex = new ParticleCommunicator.Communicator.ApexR5pCommunicator();
 
 // Works
-apex.ConnectToModbusDevice("192.168.0.14");
+apex.ConnectToModbusDevice("10.8.4.61");
 
 apex.StopInstrument();
-return;
+
 //apex.StopDataValidation();
 //apex.StopLocationValidation();
 
-//Thread.Sleep(2000);
+Thread.Sleep(2000);
 //apex.StartLocationValidation();
 
 apex.StartInstrument();
 
-apex.ParticleDataRecordEvent += new ApexR5pSubscriberExample().OnMyEventRaised;
+apex.ParticleDataRecordEvent += new ApexR5pSubscriberExample().OnParticleDataEventRaised;
+apex.ParticleAlarmEvent += new ApexR5pSubscriberExample().OnParticleAlarmEventRaised;
 
- Task.Run(() =>
-{
-    Thread.Sleep(60000);
-    apex.isSampling = false;
-});
+//Task.Run(() =>
+//{
+//   Thread.Sleep(60000);
+//   apex.isSampling = false;
+//});
 
-await apex.GetParticleData(3);
+await apex.GetParticleData(2);
 
 Debug.WriteLine("IsSampling: " + apex.isSampling);
 

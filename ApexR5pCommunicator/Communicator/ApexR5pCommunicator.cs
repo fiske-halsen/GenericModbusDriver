@@ -18,11 +18,21 @@ namespace ParticleCommunicator.Communicator
         {
             public List<ParticleDataRecord> ParticleRecords { get; set; }
         }
+        public class ParticleAlarmArgs : EventArgs
+        {
+            public int InstrumentSerial { get; set; }
+            public int Location { get; set; }
+            public DateTime TimeStamp { get; set; }
+            public int ParticleChannel1Count { get; set; }
+            public int ParticleChannel2Count { get; set; }
+        }
+
         #endregion
 
         #region Class Variables
         private ModbusClient modbusClient;
         public event EventHandler<ParticleDataRecordArgs> ParticleDataRecordEvent;
+        public event EventHandler<ParticleAlarmArgs> ParticleAlarmEvent;
         public List<ParticleDataRecord> ParticleRecords { get; private set; } = new List<ParticleDataRecord>();
         public bool isSampling { get; set; } = true;
         #endregion
@@ -161,7 +171,6 @@ namespace ParticleCommunicator.Communicator
 
         public ApexR5pCommunicator()
         {
-
         }
 
         /// <summary>
@@ -969,6 +978,9 @@ namespace ParticleCommunicator.Communicator
             var instrumentSerial = GetInstrumentSerialNumber();
             var holdTimeMili = holdTime * 1000;
             var sampleTimeMili = sampleTime * 1000;
+            var alarmThresHoldParticleChannel1 = GetAlarmThresHoldForParticleChannel(ParticleChannel.ParticleChannel1);
+            var alarmThresHoldParticleChannel2 = GetAlarmThresHoldForParticleChannel(ParticleChannel.ParticleChannel2);
+
             List<ParticleDataRecord> particleRecords = new List<ParticleDataRecord>();
 
             await Task.Delay(initialDelayMili)
@@ -1019,6 +1031,19 @@ namespace ParticleCommunicator.Communicator
                     {
                         particleRecords.Add(record);
 
+                        if (record.ParticalChannel1Count > alarmThresHoldParticleChannel1 || record.ParticalChannel2Count > alarmThresHoldParticleChannel2)
+                        {
+                            ParticleAlarmArgs args = new ParticleAlarmArgs()
+                            {
+                                InstrumentSerial = record.InstrumentSerial,
+                                Location = record.Location,
+                                ParticleChannel1Count = record.ParticalChannel1Count,
+                                ParticleChannel2Count = record.ParticalChannel2Count,
+                                TimeStamp = record.SampleTimeStamp
+                            };
+
+                            ParticleAlarmEvent?.Invoke(null, args);
+                        }
                     }
                 }
             }
