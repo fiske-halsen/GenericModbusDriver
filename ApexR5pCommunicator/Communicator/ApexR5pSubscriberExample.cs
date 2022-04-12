@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using static ParticleCommunicator.Communicator.ApexR5pCommunicator;
 
 namespace ParticleCommunicator.Communicator
@@ -11,13 +10,25 @@ namespace ParticleCommunicator.Communicator
         {
             var args = ((ParticleDataRecordArgs) e).ParticleRecords;
 
-            Debug.WriteLine(DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss",
-                                            CultureInfo.InvariantCulture));
-
             foreach (var item in args)
             {
-                Debug.WriteLine("ParticleDataChannel 1: " + item.ParticalChannel1Count);
-                Debug.WriteLine("ParticleDataChannel 2: " + item.ParticalChannel2Count);
+                Debug.WriteLine("----------------------------------------- ONE SAMPLE ----------------------------------");
+
+                Debug.WriteLine("InstrumentSerial: " + item.InstrumentSerial);
+                Debug.WriteLine("ParticleDataChannel 0,5 μm: " + item.ParticalChannel1Count);
+                Debug.WriteLine("ParticleDataChannel 5 μm: " + item.ParticalChannel2Count);
+                Debug.WriteLine("SampleTime Stamp: " + item.SampleTimeStamp);
+                Debug.WriteLine("Location: " + item.Location);
+                Debug.WriteLine("SampleTime: " + item.SampleTime);
+
+                Debug.WriteLine("Bad flow: " + item.SampleStatus.IsBadFlow);
+                Debug.WriteLine("Bad laser: " + item.SampleStatus.IsBadLaser);
+                Debug.WriteLine("Malfuntion detected: " + item.SampleStatus.IsMalfunctionDetected);
+                Debug.WriteLine("Particle overflow: " + item.SampleStatus.IsParticleOverFlow);
+                Debug.WriteLine("Sample Error: " + item.SampleStatus.IsSamplerError);
+                Debug.WriteLine("Threshold exceeded: " + item.SampleStatus.IsThresholdHighStatusExceeded);
+
+                Debug.WriteLine("----------------------------------------- END -----------------------------------------");
             }
         }
     }

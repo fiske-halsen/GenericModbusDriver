@@ -30,7 +30,17 @@
       "ProjectGuid": "c80584b4-9ce1-4096-bc97-7db840669ba8",
       "DisplayName": "ParticleCommunicator",
       "ColorIndex": 4
+    },
+    "7882b7b3-1fcb-44e7-add5-ae988a608656": {
+      "ProjectGuid": "7882b7b3-1fcb-44e7-add5-ae988a608656",
+      "DisplayName": "ApexR5pCommunicator",
+      "ColorIndex": 5
+    },
+    "d433f207-654c-4b63-8bda-2b7e6c933c49": {
+      "ProjectGuid": "d433f207-654c-4b63-8bda-2b7e6c933c49",
+      "DisplayName": "GenericModbusDriver",
+      "ColorIndex": 6
     }
   },
-  "NextColorIndex": 5
+  "NextColorIndex": 7
 }

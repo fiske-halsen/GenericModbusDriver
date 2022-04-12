@@ -4,6 +4,7 @@ namespace ParticleCommunicator.Models
 {
     public class ParticleDataRecord
     {
+        public int InstrumentSerial { get; set; }
         public DateTime SampleTimeStamp { get; set; }
         public int Location { get; set; }
         public int SampleTime { get; set; }

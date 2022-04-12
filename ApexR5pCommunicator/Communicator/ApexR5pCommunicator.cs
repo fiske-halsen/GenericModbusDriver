@@ -1,13 +1,10 @@
 ﻿using EasyModbus;
-using EasyModbus.Exceptions;
 using ParticleCommunicator.Helpers;
 using ParticleCommunicator.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Timers;
 
 namespace ParticleCommunicator.Communicator
 {
@@ -21,15 +18,13 @@ namespace ParticleCommunicator.Communicator
         {
             public List<ParticleDataRecord> ParticleRecords { get; set; }
         }
-
         #endregion
 
         #region Class Variables
         private ModbusClient modbusClient;
-
-        private static readonly DateTime defaultDate = new DateTime(1970, 1, 1);
         public event EventHandler<ParticleDataRecordArgs> ParticleDataRecordEvent;
         public List<ParticleDataRecord> ParticleRecords { get; private set; } = new List<ParticleDataRecord>();
+        public bool isSampling { get; set; } = true;
         #endregion
 
         #region Enums
@@ -180,7 +175,7 @@ namespace ParticleCommunicator.Communicator
             return $"v.{convertToVNumber}.";
         }
 
-        /// <summary>
+        /// <summary>,
         /// Gets the firmware version
         /// </summary>
         /// <returns>Returns the firmware version</returns>
@@ -373,6 +368,7 @@ namespace ParticleCommunicator.Communicator
         {
             var currentTimeRegisters = modbusClient.ReadHoldingRegisters((int)LowHoldingRegisters.InstrumentTime, 2);
             var highLowToSeconds = ModbusClient.ConvertRegistersToInt(currentTimeRegisters, ModbusClient.RegisterOrder.HighLow);
+            var defaultDate = HelperService.GetDefaultInstrumentDate();
             return defaultDate.AddSeconds(highLowToSeconds);
         }
 
@@ -382,9 +378,9 @@ namespace ParticleCommunicator.Communicator
         /// <param name="dateTime">The date time for the instrument configuration</param>
         public void SetInstrumentTime(DateTime dateTime)
         {
-            var date = new DateTime(1970, 1, 1);
+            var defaultDate = HelperService.GetDefaultInstrumentDate();
 
-            var diffInSeconds = (dateTime - date).TotalSeconds;
+            var diffInSeconds = (dateTime - defaultDate).TotalSeconds;
 
             // Split up the diff in seconds to two 2 byte objects
             var highLowRegisters = ModbusClient.ConvertIntToRegisters((int)diffInSeconds, ModbusClient.RegisterOrder.HighLow);
@@ -423,14 +419,6 @@ namespace ParticleCommunicator.Communicator
             var holdTimeRegisters = modbusClient.ReadHoldingRegisters((int)HighHoldingRegisters.HoldTime, 2);
             var lowRegister = holdTimeRegisters[0];
             var highRegister = holdTimeRegisters[1];
-
-            var onlyLowRegister = HelperService.CheckIfOnlyReturnLowRegister(highRegister);
-
-            if (onlyLowRegister)
-            {
-                return lowRegister;
-            }
-
             return ModbusClient.ConvertRegistersToInt(holdTimeRegisters, ModbusClient.RegisterOrder.HighLow);
         }
 
@@ -440,12 +428,9 @@ namespace ParticleCommunicator.Communicator
         /// <param name="holdTimeInSeconds"> the hold time</param>
         public void SetHoldTime(int holdTimeInSeconds)
         {
-
             HelperService.CheckIfValidHoldOrDelayTime(holdTimeInSeconds);
 
-            var holdTimeLowRegisterSeconds = HelperService.GetMinValueSampleHoldRegister();
-
-            var isOnlyLowRegister = HelperService.CheckIfTimeOnlyToLowRegister(holdTimeInSeconds, holdTimeLowRegisterSeconds);
+            var isOnlyLowRegister = HelperService.CheckIfOnlyToLowerRegister(holdTimeInSeconds);
 
             // check if hold time in seconds only has to be written to the low register
             if (isOnlyLowRegister)
@@ -467,16 +452,6 @@ namespace ParticleCommunicator.Communicator
         public int GetSampleTime()
         {
             var sampleRegisters = modbusClient.ReadHoldingRegisters((int)HighHoldingRegisters.SampleTime, 2);
-            var lowRegister = sampleRegisters[0];
-            var highRegister = sampleRegisters[1];
-
-            var isOnlyLow = HelperService.CheckIfOnlyReturnLowRegister(highRegister);
-
-            if (isOnlyLow)
-            {
-                return lowRegister;
-            }
-
             return ModbusClient.ConvertRegistersToInt(sampleRegisters, ModbusClient.RegisterOrder.HighLow);
         }
 
@@ -488,9 +463,7 @@ namespace ParticleCommunicator.Communicator
         {
             HelperService.CheckIfValidHoldOrDelayTime(sampleTimeInSeconds);
 
-            var sampleTimeLowRegisterSeconds = HelperService.GetMinValueSampleHoldRegister();
-
-            var isOnlyLowRegister = HelperService.CheckIfTimeOnlyToLowRegister(sampleTimeInSeconds, sampleTimeLowRegisterSeconds);
+            var isOnlyLowRegister = HelperService.CheckIfOnlyToLowerRegister(sampleTimeInSeconds);
 
             if (isOnlyLowRegister)
             {
@@ -568,36 +541,15 @@ namespace ParticleCommunicator.Communicator
         public int GetAlarmThresHoldForParticleChannel(ParticleChannel particleChannel)
         {
             int[] alarmThresholdRegisters;
-            int lowRegister;
-            int highRegister;
-
 
             if (particleChannel.Equals(ParticleChannel.ParticleChannel1))
             {
                 alarmThresholdRegisters = modbusClient.ReadHoldingRegisters((int)HighHoldingRegisters.AlarmThresHoldParticleChannel1, 2);
-
-                lowRegister = alarmThresholdRegisters[1];
-                highRegister = alarmThresholdRegisters[0];
-
-                var isOnlyLow = HelperService.CheckIfOnlyReturnLowRegister(highRegister);
-
-                if (isOnlyLow)
-                {
-                    return lowRegister;
-                }
             }
             else
             {
-                alarmThresholdRegisters = modbusClient.ReadHoldingRegisters((int)LowHoldingRegisters.AlarmThresHoldParticleChannel2, 2);
-                lowRegister = alarmThresholdRegisters[1];
-                highRegister = alarmThresholdRegisters[0];
+                alarmThresholdRegisters = modbusClient.ReadHoldingRegisters((int)HighHoldingRegisters.AlarmThresHoldParticleChannel2, 2);
 
-                var isOnlyLow = HelperService.CheckIfOnlyReturnLowRegister(highRegister);
-
-                if (isOnlyLow)
-                {
-                    return lowRegister;
-                }
             }
             return ModbusClient.ConvertRegistersToInt(alarmThresholdRegisters, ModbusClient.RegisterOrder.HighLow);
         }
@@ -611,15 +563,33 @@ namespace ParticleCommunicator.Communicator
         {
             var convertedThresHoldToRegisters = ModbusClient.ConvertIntToRegisters(threshold, ModbusClient.RegisterOrder.HighLow);
 
+            var lowRegister = convertedThresHoldToRegisters[1];
+            var highRegister = convertedThresHoldToRegisters[0];
+
+            var isLowerOnly = HelperService.CheckIfOnlyToLowerRegister(threshold);
+
             if (particleChannel.Equals(ParticleChannel.ParticleChannel1))
             {
-                modbusClient.WriteSingleRegister((int)HighHoldingRegisters.AlarmThresHoldParticleChannel1, convertedThresHoldToRegisters[0]);
-                modbusClient.WriteSingleRegister((int)LowHoldingRegisters.AlarmThresHoldParticleChannel1, convertedThresHoldToRegisters[1]);
+                if (isLowerOnly)
+                {
+                    modbusClient.WriteSingleRegister((int)LowHoldingRegisters.AlarmThresHoldParticleChannel1, lowRegister);
+                    return;
+                }
+
+                modbusClient.WriteSingleRegister((int)HighHoldingRegisters.AlarmThresHoldParticleChannel1, highRegister);
+                modbusClient.WriteSingleRegister((int)LowHoldingRegisters.AlarmThresHoldParticleChannel1, lowRegister);
             }
             else
             {
-                modbusClient.WriteSingleRegister((int)HighHoldingRegisters.AlarmThresHoldParticleChannel2, convertedThresHoldToRegisters[0]);
-                modbusClient.WriteSingleRegister((int)LowHoldingRegisters.AlarmThresHoldParticleChannel2, convertedThresHoldToRegisters[1]);
+
+                if (isLowerOnly)
+                {
+                    modbusClient.WriteSingleRegister((int)LowHoldingRegisters.AlarmThresHoldParticleChannel2, lowRegister);
+                    return;
+                }
+
+                modbusClient.WriteSingleRegister((int)HighHoldingRegisters.AlarmThresHoldParticleChannel2, highRegister);
+                modbusClient.WriteSingleRegister((int)LowHoldingRegisters.AlarmThresHoldParticleChannel2, lowRegister);
             }
         }
 
@@ -671,7 +641,7 @@ namespace ParticleCommunicator.Communicator
         }
 
         /// <summary>
-        /// Sets the current data record index in the buffer to retrieve data from
+        /// Sets the current data record index in the buffer to retrieve data from, set to -1 to get the latest
         /// </summary>
         /// <param name="recordDataIndex"> The record index to be set</param>
         public void SetCurrentDataRecordIndex(int recordDataIndex)
@@ -689,7 +659,7 @@ namespace ParticleCommunicator.Communicator
         /// <returns> The initial delay </returns>
         public int GetCurrentInitialDelay()
         {
-            var holdingInitialDelay = modbusClient.ReadHoldingRegisters((int)LowHoldingRegisters.InitialDelay, 2);
+            var holdingInitialDelay = modbusClient.ReadHoldingRegisters((int)HighHoldingRegisters.InitialDelay, 2);
             return ModbusClient.ConvertRegistersToInt(holdingInitialDelay, ModbusClient.RegisterOrder.HighLow);
         }
 
@@ -701,14 +671,13 @@ namespace ParticleCommunicator.Communicator
         {
             HelperService.CheckIfValidHoldOrDelayTime(initialDelayInSeconds);
 
-            var delayTimeLowRegisterSeconds = HelperService.GetMinValueSampleHoldRegister();
-
-            var isOnlyLowRegister = HelperService.CheckIfTimeOnlyToLowRegister(initialDelayInSeconds, delayTimeLowRegisterSeconds);
+            var isOnlyLowRegister = HelperService.CheckIfOnlyToLowerRegister(initialDelayInSeconds);
 
             if (isOnlyLowRegister)
             {
                 modbusClient.WriteSingleRegister((int)LowHoldingRegisters.InitialDelay, initialDelayInSeconds);
             }
+
             else
             {
                 var convertedDelaTimeRegisters = ModbusClient.ConvertIntToRegisters(initialDelayInSeconds, ModbusClient.RegisterOrder.HighLow);
@@ -728,11 +697,13 @@ namespace ParticleCommunicator.Communicator
         /// <returns>The datetime for the calibration due date</returns>
         public DateTime GetCalibrationDueDate()
         {
-            var calibrationDuedateHoldingsRegisters = modbusClient.ReadHoldingRegisters((int)LowHoldingRegisters.CalibrationDueDate, 2);
+            var calibrationDuedateHoldingsRegisters = modbusClient.ReadHoldingRegisters((int)HighHoldingRegisters.CalibrationDueDate, 2);
 
             var calibrationDueDateInSeconds = ModbusClient.ConvertRegistersToInt(calibrationDuedateHoldingsRegisters, ModbusClient.RegisterOrder.HighLow);
 
-            var calibrationDueDateTime = new DateTime(1970, 1, 1).AddSeconds(calibrationDueDateInSeconds);
+            var defaultDate = HelperService.GetDefaultInstrumentDate();
+
+            var calibrationDueDateTime = defaultDate.AddSeconds(calibrationDueDateInSeconds);
 
             return calibrationDueDateTime;
         }
@@ -743,8 +714,10 @@ namespace ParticleCommunicator.Communicator
         /// Sets the calibration due date
         /// </summary>
         /// <param name="dateTime"></param>
-        public void SetCalibrationDueDate(DateTime dateTime)
+        private void SetCalibrationDueDate(DateTime dateTime)
         {
+            var defaultDate = HelperService.GetDefaultInstrumentDate();
+
             var diffInSeconds = (dateTime - defaultDate).TotalSeconds;
 
             var highLowRegisters = ModbusClient.ConvertIntToRegisters((int)diffInSeconds, ModbusClient.RegisterOrder.HighLow);
@@ -759,21 +732,27 @@ namespace ParticleCommunicator.Communicator
         /// <returns>The last calibration date</returns>
         public DateTime GetLastCalibrationDate()
         {
-            var calibrationDateHoldingsRegisters = modbusClient.ReadHoldingRegisters((int)LowHoldingRegisters.LastCalibrationDate, 2);
+            var calibrationDateHoldingsRegisters = modbusClient.ReadHoldingRegisters((int)HighHoldingRegisters.LastCalibrationDate, 2);
 
             var calibrationDateInSeconds = ModbusClient.ConvertRegistersToInt(calibrationDateHoldingsRegisters, ModbusClient.RegisterOrder.HighLow);
 
-            var calibrationDateTime = new DateTime(1970, 1, 1).AddSeconds(calibrationDateInSeconds);
+            var defaultDate = HelperService.GetDefaultInstrumentDate();
+
+            var calibrationDateTime = defaultDate.AddSeconds(calibrationDateInSeconds);
 
             return calibrationDateTime;
         }
+
+        // Dont know if this will work for now
 
         /// <summary>
         /// Sets the last calibration date
         /// </summary>
         /// <param name="dateTime"></param>
-        public void SetLastCalibrationDate(DateTime dateTime)
+        private void SetLastCalibrationDate(DateTime dateTime)
         {
+            var defaultDate = HelperService.GetDefaultInstrumentDate();
+
             var diffInSeconds = (dateTime - defaultDate).TotalSeconds;
 
             var highLowRegisters = ModbusClient.ConvertIntToRegisters((int)diffInSeconds, ModbusClient.RegisterOrder.HighLow);
@@ -787,9 +766,10 @@ namespace ParticleCommunicator.Communicator
         /// <returns>The datetime for the last sample timestamp</returns>
         public DateTime GetLastSampleTimeStamp()
         {
-            var SampleTimeStampRegisters = modbusClient.ReadHoldingRegisters((int)LowHoldingRegisters.LastSampleTimeStamp, 2);
-            var sampleTimeStampInSeconds = ModbusClient.ConvertRegistersToInt(SampleTimeStampRegisters, ModbusClient.RegisterOrder.HighLow);
-            var sampleDateTime = new DateTime(1970, 1, 1).AddSeconds(sampleTimeStampInSeconds);
+            var sampleTimeStampRegisters = modbusClient.ReadHoldingRegisters((int)HighHoldingRegisters.LastSampleTimeStamp, 2);
+            var sampleTimeStampInSeconds = ModbusClient.ConvertRegistersToInt(sampleTimeStampRegisters, ModbusClient.RegisterOrder.HighLow);
+            var defaultDate = HelperService.GetDefaultInstrumentDate();
+            var sampleDateTime = defaultDate.AddSeconds(sampleTimeStampInSeconds);
             return sampleDateTime;
         }
 
@@ -799,9 +779,10 @@ namespace ParticleCommunicator.Communicator
         /// <returns> The datetime for the last setting change time stamp</returns>
         public DateTime GetLastSettingsChangeTimeStamp()
         {
-            var settingChangeTimeRegisters = modbusClient.ReadHoldingRegisters((int)LowHoldingRegisters.LastSettingsChangeTimeStamp, 2);
+            var settingChangeTimeRegisters = modbusClient.ReadHoldingRegisters((int)HighHoldingRegisters.LastSettingsChangeTimeStamp, 2);
             var settingChangeTimeInSeconds = ModbusClient.ConvertRegistersToInt(settingChangeTimeRegisters, ModbusClient.RegisterOrder.HighLow);
-            var settingChangeDateTime = new DateTime(1970, 1, 1).AddSeconds(settingChangeTimeInSeconds);
+            var defaultDate = HelperService.GetDefaultInstrumentDate();
+            var settingChangeDateTime = defaultDate.AddSeconds(settingChangeTimeInSeconds);
             return settingChangeDateTime;
         }
 
@@ -831,7 +812,7 @@ namespace ParticleCommunicator.Communicator
         /// </summary>
         /// <param name="particleChannel">The particle channel</param>
         /// <returns></returns>
-        public int GetParticleChannelCount(ParticleChannel particleChannel)
+        private int GetParticleChannelCount(ParticleChannel particleChannel)
         {
             int[] particleChannelHoldings;
 
@@ -975,30 +956,31 @@ namespace ParticleCommunicator.Communicator
 
         /// <summary>
         /// Raises an event, create subscribers to get latest sample data
+        /// To stop the while loop set the class variable isSampling = false
         /// </summary>
         /// <param name="sampleRate"></param>
         /// <param name="particleRecords"></param>
         public async Task GetParticleData(int sampleRate)
         {
+
+            var initialDelayMili = GetCurrentInitialDelay() * 1000;
             var holdTime = GetTotalDataRecordCount();
             var sampleTime = GetSampleTime();
-
-            // Need to find a way to pause sampling
-            var isSampling = true;
-
-
-
-            // Init list
+            var instrumentSerial = GetInstrumentSerialNumber();
+            var holdTimeMili = holdTime * 1000;
+            var sampleTimeMili = sampleTime * 1000;
             List<ParticleDataRecord> particleRecords = new List<ParticleDataRecord>();
+
+            await Task.Delay(initialDelayMili)
+                .ConfigureAwait(false);
 
             while (isSampling)
             {
                 var totalDataRecords = GetTotalDataRecordCount();
-                var holdTimeMili = holdTime * 1000;
-                var sampleTimeMili = sampleTime * 1000;
 
                 if (particleRecords.Count == sampleRate)
                 {
+                    ;
                     ParticleDataRecordArgs args = new ParticleDataRecordArgs()
                     {
                         ParticleRecords = particleRecords
@@ -1007,12 +989,12 @@ namespace ParticleCommunicator.Communicator
                     ParticleDataRecordEvent?.Invoke(null, args);
                     ClearAllDataRecords();
                     particleRecords.Clear();
-                    await Task.Delay(holdTimeMili + sampleTimeMili).ConfigureAwait(false);
+                    await Task.Delay(holdTimeMili + sampleTimeMili)
+                       .ConfigureAwait(false);
                 }
 
                 if (totalDataRecords > 0)
                 {
-                    // Registers
                     var sampleTimeStamp = GetLastSampleTimeStamp();
                     var currentSampleTimeInSeconds = GetSampleTime();
                     var sampleStatusWord = GetSampleStatusWord();
@@ -1022,6 +1004,7 @@ namespace ParticleCommunicator.Communicator
 
                     ParticleDataRecord record = new ParticleDataRecord()
                     {
+                        InstrumentSerial = instrumentSerial,
                         SampleTimeStamp = sampleTimeStamp,
                         Location = location,
                         SampleTime = currentSampleTimeInSeconds,
@@ -1035,6 +1018,7 @@ namespace ParticleCommunicator.Communicator
                     if (!isNotUnique)
                     {
                         particleRecords.Add(record);
+
                     }
                 }
             }

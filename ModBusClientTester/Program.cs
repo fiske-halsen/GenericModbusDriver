@@ -10,9 +10,11 @@ using System.Net.Sockets;
 
 ModbusClient e = new ModbusClient();
 
-// connection
+//// connection
 //e.Connect("192.168.0.14", 502); //home Ip
 
+//var holdings = e.ReadHoldingRegisters(57, 2);
+//var converted = ModbusClient.ConvertRegistersToInt(holdings, ModbusClient.RegisterOrder.HighLow);
 //e.Connect("10.8.4.61", 502);
 //e.WriteSingleRegister(1,12);
 
@@ -38,8 +40,6 @@ ModbusClient e = new ModbusClient();
 //List<RegisterClass> listAfter = new List<RegisterClass>();
 //List<RegisterClass> finalList = new List<RegisterClass>();
 
-
-//// 1. Before the ip address change
 //for (int i = 0; i < 9999; i++)
 //{
 //    var holdingsTest = e.ReadHoldingRegisters(i, 1);
@@ -63,7 +63,6 @@ ModbusClient e = new ModbusClient();
 //    });
 //}
 //var hello = "";
-
 //Console.WriteLine("yeeeee");
 //var differences = listBefore.Except(listAfter).Concat(listAfter.Except(listBefore));
 
@@ -76,30 +75,40 @@ ModbusClient e = new ModbusClient();
 
 ////var inputs = e.ReadHoldingRegisters(3008,4);
 //return;
-
 // -------------------------------- Phillips Libary ------------------------------
 ParticleCommunicator.Communicator.ApexR5pCommunicator apex = new ParticleCommunicator.Communicator.ApexR5pCommunicator();
 
 // Works
 apex.ConnectToModbusDevice("10.8.4.61");
 
-/*
 apex.StopInstrument();
 
 return;
+//apex.StopDataValidation();
+//apex.StopLocationValidation();
+
+//Thread.Sleep(2000);
+//apex.StartLocationValidation();
+
 apex.StartInstrument();
-Thread.Sleep(2000);
 
 apex.ParticleDataRecordEvent += new ApexR5pSubscriberExample().OnMyEventRaised;
 
+ Task.Run(() =>
+{
+    Thread.Sleep(60000);
+    apex.isSampling = false;
+});
+
 await apex.GetParticleData(3);
-*/
+
+Debug.WriteLine("IsSampling: " + apex.isSampling);
+
+//return;
 
 // -------------------------------- PHILLIPS LIBARY TEST METHODS ------------------------------
 
 // Works
-//apex.StopInstrument();
-
 // Works
 //apex.StartInstrument();
 
@@ -192,9 +201,35 @@ await apex.GetParticleData(3);
 // Works
 //Debug.WriteLine(apex.GetInstrumentFlowRate());
 
+// Works
+//Debug.WriteLine(apex.GetInstrumentFlowRatUnit());
 
+// Works
+//Debug.WriteLine(apex.GetTotalDataRecordCount());
 
-return;
+// Works
+//Debug.WriteLine(apex.GetCurrentInitialDelay());
+
+// Works
+//Debug.WriteLine(apex.GetCalibrationDueDate());
+
+// Works
+//Debug.WriteLine(apex.GetLastCalibrationDate());
+
+// Works
+//Debug.WriteLine(apex.GetLastSampleTimeStamp());
+
+// Works
+//Debug.WriteLine(apex.GetLastSettingsChangeTimeStamp());
+
+// Works
+//var deviceOptions = apex.GetDeviceOptionStatus();
+
+// Works
+//var sampleStatusWord = apex.GetSampleStatusWord();
+
+// Works
+
 
 // -------------------------------- PHILLIPS LIBARY TEST METHODS END ------------------------------
 

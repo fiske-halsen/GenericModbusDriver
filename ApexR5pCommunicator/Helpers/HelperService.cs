@@ -1,7 +1,7 @@
 ﻿using EasyModbus.Exceptions;
 using ParticleCommunicator.Models;
+using System;
 using System.Collections;
-using static ParticleCommunicator.Communicator.ApexR5pCommunicator;
 
 namespace ParticleCommunicator.Helpers
 {
@@ -15,6 +15,7 @@ namespace ParticleCommunicator.Helpers
         private const int DEFAULT_MIN_HOLD_DELAY_TIME = 0;
         private const int DEFAULT_MAX_SAMPLE_TIME = 86399;
         private const int DEFAULT_MIN_SAMPLE_TIME = 0;
+        private const int MAX_HOLDING_VALUE = 32767;
         #endregion
 
         /// <summary>
@@ -123,6 +124,16 @@ namespace ParticleCommunicator.Helpers
             return false;
         }
 
+
+        /// <summary>
+        /// Gets the instument default date
+        /// </summary>
+        /// <returns></returns>
+        public static DateTime GetDefaultInstrumentDate()
+        {
+            return new DateTime(1970, 1, 1);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -163,7 +174,6 @@ namespace ParticleCommunicator.Helpers
             int[] array = new int[1];
             bitArray.CopyTo(array, 0);
             return array[0];
-
         }
 
         /// <summary>
@@ -229,14 +239,13 @@ namespace ParticleCommunicator.Helpers
         }
 
         /// <summary>
-        /// Checks if the time in seconds only needs to be written to the low register
+        /// Checks if a int only needs to be written to low register
         /// </summary>
-        /// <param name="seconds"></param>
-        /// <param name="lowRegisterSeconds"></param>
+        /// <param name="value"></param>
         /// <returns></returns>
-        public static bool CheckIfTimeOnlyToLowRegister(int seconds, int lowRegisterSeconds)
+        public static bool CheckIfOnlyToLowerRegister(int value)
         {
-            if (seconds <= lowRegisterSeconds)
+            if (value <= MAX_HOLDING_VALUE)
             {
                 return true;
             }

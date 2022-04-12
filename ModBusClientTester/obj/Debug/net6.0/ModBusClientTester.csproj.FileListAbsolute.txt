@@ -12,8 +12,6 @@ C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\bin\Debug\net6.0\run
 C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\bin\Debug\net6.0\runtimes\osx-x64\native\libSystem.IO.Ports.Native.dylib
 C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\bin\Debug\net6.0\runtimes\unix\lib\net6.0\System.IO.Ports.dll
 C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.IO.Ports.dll
-C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\bin\Debug\net6.0\ModbusDriver.dll
-C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\bin\Debug\net6.0\ModbusDriver.pdb
 C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\obj\Debug\net6.0\ModBusClientTester.csproj.AssemblyReference.cache
 C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\obj\Debug\net6.0\ModBusClientTester.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\obj\Debug\net6.0\ModBusClientTester.AssemblyInfoInputs.cache
@@ -24,8 +22,6 @@ C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\obj\Debug\net6.0\Mod
 C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\obj\Debug\net6.0\ref\ModBusClientTester.dll
 C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\obj\Debug\net6.0\ModBusClientTester.pdb
 C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\obj\Debug\net6.0\ModBusClientTester.genruntimeconfig.cache
-C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\bin\Debug\net6.0\ParticleCommunicator.dll
-C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\bin\Debug\net6.0\ParticleCommunicator.pdb
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\ModBusClientTester.exe
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\ModBusClientTester.deps.json
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\ModBusClientTester.runtimeconfig.json
@@ -54,3 +50,7 @@ C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\De
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\GenericModbusDriver.dll
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\ApexR5pCommunicator.pdb
 C:\Users\phia\Desktop\ModbusDriver\GenericModbusDriver\ModBusClientTester\bin\Debug\net6.0\GenericModbusDriver.pdb
+C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\bin\Debug\net6.0\ApexR5pCommunicator.dll
+C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\bin\Debug\net6.0\GenericModbusDriver.dll
+C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\bin\Debug\net6.0\ApexR5pCommunicator.pdb
+C:\Users\phill\source\repos\ModbusDriver\ModBusClientTester\bin\Debug\net6.0\GenericModbusDriver.pdb
