@@ -83,6 +83,8 @@ apex.ConnectToModbusDevice("10.8.4.61");
 
 apex.StopInstrument();
 
+return;
+
 //apex.StopDataValidation();
 //apex.StopLocationValidation();
 

@@ -986,67 +986,72 @@ namespace ParticleCommunicator.Communicator
             await Task.Delay(initialDelayMili)
                 .ConfigureAwait(false);
 
-            while (isSampling)
+            await Task.Run(() =>
             {
-                var totalDataRecords = GetTotalDataRecordCount();
-
-                if (particleRecords.Count == sampleRate)
+                while (isSampling)
                 {
-                    ;
-                    ParticleDataRecordArgs args = new ParticleDataRecordArgs()
+                    var totalDataRecords = GetTotalDataRecordCount();
+
+                    if (particleRecords.Count == sampleRate)
                     {
-                        ParticleRecords = particleRecords
-                    };
-
-                    ParticleDataRecordEvent?.Invoke(null, args);
-                    ClearAllDataRecords();
-                    particleRecords.Clear();
-                    await Task.Delay(holdTimeMili + sampleTimeMili)
-                       .ConfigureAwait(false);
-                }
-
-                if (totalDataRecords > 0)
-                {
-                    var sampleTimeStamp = GetLastSampleTimeStamp();
-                    var currentSampleTimeInSeconds = GetSampleTime();
-                    var sampleStatusWord = GetSampleStatusWord();
-                    var location = GetLocationNumber();
-                    var particleChannel1Count = GetParticleChannelCount(ParticleChannel.ParticleChannel1);
-                    var particleChannel2Count = GetParticleChannelCount(ParticleChannel.ParticleChannel2);
-
-                    ParticleDataRecord record = new ParticleDataRecord()
-                    {
-                        InstrumentSerial = instrumentSerial,
-                        SampleTimeStamp = sampleTimeStamp,
-                        Location = location,
-                        SampleTime = currentSampleTimeInSeconds,
-                        SampleStatus = sampleStatusWord,
-                        ParticalChannel1Count = particleChannel1Count,
-                        ParticalChannel2Count = particleChannel2Count
-                    };
-
-                    var isNotUnique = particleRecords.Any(x => DateTime.Equals(x.SampleTimeStamp, sampleTimeStamp));
-
-                    if (!isNotUnique)
-                    {
-                        particleRecords.Add(record);
-
-                        if (record.ParticalChannel1Count > alarmThresHoldParticleChannel1 || record.ParticalChannel2Count > alarmThresHoldParticleChannel2)
+                        ;
+                        ParticleDataRecordArgs args = new ParticleDataRecordArgs()
                         {
-                            ParticleAlarmArgs args = new ParticleAlarmArgs()
-                            {
-                                InstrumentSerial = record.InstrumentSerial,
-                                Location = record.Location,
-                                ParticleChannel1Count = record.ParticalChannel1Count,
-                                ParticleChannel2Count = record.ParticalChannel2Count,
-                                TimeStamp = record.SampleTimeStamp
-                            };
+                            ParticleRecords = particleRecords
+                        };
 
-                            ParticleAlarmEvent?.Invoke(null, args);
+                        ParticleDataRecordEvent?.Invoke(null, args);
+                        ClearAllDataRecords();
+                        particleRecords.Clear();
+                        Task.Delay(holdTimeMili + sampleTimeMili)
+                          .ConfigureAwait(false);
+                    }
+
+                    if (totalDataRecords > 0)
+                    {
+                        var sampleTimeStamp = GetLastSampleTimeStamp();
+                        var currentSampleTimeInSeconds = GetSampleTime();
+                        var sampleStatusWord = GetSampleStatusWord();
+                        var location = GetLocationNumber();
+                        var particleChannel1Count = GetParticleChannelCount(ParticleChannel.ParticleChannel1);
+                        var particleChannel2Count = GetParticleChannelCount(ParticleChannel.ParticleChannel2);
+
+                        ParticleDataRecord record = new ParticleDataRecord()
+                        {
+                            InstrumentSerial = instrumentSerial,
+                            SampleTimeStamp = sampleTimeStamp,
+                            Location = location,
+                            SampleTime = currentSampleTimeInSeconds,
+                            SampleStatus = sampleStatusWord,
+                            ParticalChannel1Count = particleChannel1Count,
+                            ParticalChannel2Count = particleChannel2Count
+                        };
+
+                        var isNotUnique = particleRecords.Any(x => DateTime.Equals(x.SampleTimeStamp, sampleTimeStamp));
+
+                        if (!isNotUnique)
+                        {
+                            particleRecords.Add(record);
+
+                            if (record.ParticalChannel1Count > alarmThresHoldParticleChannel1 || record.ParticalChannel2Count > alarmThresHoldParticleChannel2)
+                            {
+                                ParticleAlarmArgs args = new ParticleAlarmArgs()
+                                {
+                                    InstrumentSerial = record.InstrumentSerial,
+                                    Location = record.Location,
+                                    ParticleChannel1Count = record.ParticalChannel1Count,
+                                    ParticleChannel2Count = record.ParticalChannel2Count,
+                                    TimeStamp = record.SampleTimeStamp
+                                };
+
+                                ParticleAlarmEvent?.Invoke(null, args);
+                            }
                         }
                     }
                 }
-            }
+
+            });
+
         }
     }
 }
