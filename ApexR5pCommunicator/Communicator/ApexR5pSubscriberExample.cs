@@ -6,9 +6,9 @@ namespace ParticleCommunicator.Communicator
 {
     public class ApexR5pSubscriberExample
     {
-        public void OnMyEventRaised(object sender, EventArgs e)
+        public void OnParticleDataEventRaised(object sender, EventArgs e)
         {
-            var args = ((ParticleDataRecordArgs) e).ParticleRecords;
+            var args = ((ParticleDataRecordArgs)e).ParticleRecords;
 
             foreach (var item in args)
             {
@@ -28,8 +28,23 @@ namespace ParticleCommunicator.Communicator
                 Debug.WriteLine("Sample Error: " + item.SampleStatus.IsSamplerError);
                 Debug.WriteLine("Threshold exceeded: " + item.SampleStatus.IsThresholdHighStatusExceeded);
 
-                Debug.WriteLine("----------------------------------------- END -----------------------------------------");
+                Debug.WriteLine("----------------------------------------- DATA END -----------------------------------------");
             }
+        }
+
+        public void OnParticleAlarmEventRaised(object sender, EventArgs e)
+        {
+
+            var args = ((ParticleAlarmArgs)e);
+
+            Debug.WriteLine("----------------------------------------- ALARM ----------------------------------");
+
+            Debug.WriteLine("InstrumentSerial: " + args.InstrumentSerial);
+            Debug.WriteLine("ParticleDataChannel 0,5 μm: " + args.ParticleChannel1Count);
+            Debug.WriteLine("ParticleDataChannel 5 μm: " + args.ParticleChannel2Count);
+            Debug.WriteLine("Time for alarm: " + args.TimeStamp);
+            Debug.WriteLine("Location: " + args.Location);
+            Debug.WriteLine("----------------------------------------- ALARM END -----------------------------------------");
         }
     }
 }
